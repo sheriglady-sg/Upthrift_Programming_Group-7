@@ -1,8 +1,19 @@
 const express = require("express");
+const path = require("path");
+
 const app = express();
 
+//Telling express to use EJS
+app.set("view engine", "ejs");
+
+//Telling express where the views are
+app.set("views", path.join(__dirname, "views"));
+
+//Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/", (req, res) => {
-    res.send("UpThrift server is running");
+    res.render("index");
 });
 
 app.listen(3000, () => {
