@@ -1,0 +1,1 @@
+This folder stores image assets used in the UpThrift interface.

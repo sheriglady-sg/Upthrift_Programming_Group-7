@@ -1,0 +1,1 @@
+This folder contains frontend JavaScript files for the UpThrift Project.
