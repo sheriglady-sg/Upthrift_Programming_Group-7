@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – Share Your Find</title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('components/topbar') %>
+
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
+
+    <main class="main-content main-content--create">
+      <div class="page-header-row page-header-row--details">
+        <a href="/feed" class="back-link">
+          <!-- REPLACE: Back arrow icon -->
+          <span class="back-arrow">←</span> Back to Feed
+        </a>
+        <span class="breadcrumb-tag">CREATE POST – UPLOAD PHOTO/VIDEO</span>
+      </div>
+
+      <h1 class="page-title">Share Your Find</h1>
+
+      <div class="create-post-form-wrapper">
+        <form action="/create-post" method="POST" enctype="multipart/form-data" class="create-post-form">
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea
+              class="form-textarea"
+              name="description"
+              placeholder="Tell us about your thrift find or upcycling project..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Upload Media</label>
+            <div class="upload-drop-zone" id="dropZone">
+              <!-- REPLACE: Upload icon -->
+              <div class="upload-icon-placeholder">↑</div>
+              <p class="upload-label">Drag and drop your photos or videos here</p>
+              <p class="upload-or">or</p>
+              <button type="button" class="btn-browse" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+              <input type="file" id="fileInput" name="media" accept="image/*,video/*" multiple style="display:none" onchange="handleFiles(this.files)" />
+            </div>
+
+            <div class="upload-type-btns">
+              <button type="button" class="btn-upload-type" onclick="document.getElementById('fileInput').click()">
+                <!-- REPLACE: Photo icon -->
+                <span>🖼</span> Add Photo
+              </button>
+              <button type="button" class="btn-upload-type" onclick="document.getElementById('fileInput').click()">
+                <!-- REPLACE: Video icon -->
+                <span>🎥</span> Add Video
+              </button>
+            </div>
+
+            <div class="media-preview-area" id="previewArea">
+              <span class="preview-placeholder-text">Preview area for uploaded media</span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/feed" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-post">Post</button>
+          </div>
+
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <%- include('components/footerlogin') %>
+
+  <script src="/js/create-post.js"></script>
+</body>
+</html>
