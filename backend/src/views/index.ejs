@@ -1,15 +1,55 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>UpThrift</title>
-        <link rel="stylesheet" href="/css/style.css"
-    </head>
-    <body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UpThrift | Landing Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="landing-page">
 
-        <h1>Welcome to UpThrift</h1>
-        <p>Thrifting, Upcycliing & Sustainable Fashion</p>
+    <nav class="navbar">
+        <div class="nav-logo">UpThrift</div>
+        <div class="nav-links">
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/login" class="login-btn">Login</a>
+        </div>
+    </nav>
 
-<!-- Footer goes here-->
- <%- include("components/footer") %>
-    </body>
+    <main>
+        <section class="hero">
+            <span class="badge">LANDING PAGE</span>
+            <h1 class="hero-title">Share Thrift Finds, Upcycling Ideas</h1>
+            <p class="hero-subtitle">
+                Discover local thrift stores and events. Join a community of <br>
+                sustainable shoppers and creative upcyclers.
+            </p>
+            <a href="/get-started" class="cta-btn">Get Started</a>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <div class="placeholder-img">Share Finds</div>
+                <h3>Share Your Finds</h3>
+                <p>Upload photos and videos of your amazing thrift store discoveries</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="placeholder-img">Discover Stores</div>
+                <h3>Find Local Stores</h3>
+                <p>Explore thrift stores near you with reviews and details</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="placeholder-img">Join Events</div>
+                <h3>Attend Events</h3>
+                <p>Discover and RSVP to local thrifting events and meetups</p>
+            </div>
+        </section>
+    </main>
+
+    <%- include('components/footer') %>
+
+</body>
 </html>
