@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – New Message</title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('partials/topbar') %>
+
+  <div class="app-shell">
+    <%- include('partials/sidebar', { activePage }) %>
+
+    <main class="main-content main-content--new-msg">
+
+      <!-- Page header -->
+      <div class="new-msg-header">
+        <a href="/messages" class="back-link">
+          <!-- REPLACE: back arrow icon -->
+          <span class="back-arrow">←</span>
+        </a>
+        <div>
+          <h1 class="page-title new-msg-title">New Message</h1>
+          <p class="new-msg-subtitle">Send a message to another UPTHRIFT member</p>
+        </div>
+      </div>
+
+      <!-- Compose form -->
+      <div class="new-msg-form-card">
+        <form action="/messages/new" method="POST" class="new-msg-form">
+
+          <!-- To field -->
+          <div class="new-msg-to-row">
+            <label class="new-msg-to-label">To:</label>
+            <div class="new-msg-to-input-wrap">
+              <!-- REPLACE: search icon -->
+              <span class="new-msg-to-icon">🔍</span>
+              <input
+                type="text"
+                name="recipient"
+                class="new-msg-to-input"
+                placeholder="Search for users by name or username..."
+                id="recipientInput"
+                oninput="filterUsers(this.value)"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <hr class="new-msg-form-divider" />
+
+          <!-- Message field -->
+          <div class="new-msg-body-row">
+            <label class="new-msg-body-label">Message:</label>
+            <textarea
+              name="message"
+              class="new-msg-textarea"
+              placeholder="Type your message here..."
+              rows="8"
+            ></textarea>
+          </div>
+
+          <!-- Actions -->
+          <div class="new-msg-actions">
+            <a href="/messages" class="btn-nm-cancel">Cancel</a>
+            <button type="submit" class="btn-nm-send">Send Message</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Suggested Users -->
+      <section class="suggested-users-section">
+        <h2 class="suggested-title">Suggested Users</h2>
+        <div class="suggested-list" id="suggestedList">
+          <% suggestedUsers.forEach(user => { %>
+          <div
+            class="suggested-item"
+            data-name="<%= user.name.toLowerCase() %> <%= user.username.toLowerCase() %>"
+            onclick="selectUser('<%= user.name %>')"
+          >
+            <div class="suggested-avatar"><%= user.initials %></div>
+            <div class="suggested-info">
+              <span class="suggested-name"><%= user.name %></span>
+              <span class="suggested-username"><%= user.username %></span>
+            </div>
+            <span class="suggested-status"><%= user.status %></span>
+          </div>
+          <% }) %>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    function filterUsers(query) {
+      const items = document.querySelectorAll('.suggested-item');
+      items.forEach(item => {
+        const nameData = item.dataset.name || '';
+        item.style.display = nameData.includes(query.toLowerCase()) ? '' : 'none';
+      });
+    }
+
+    function selectUser(name) {
+      document.getElementById('recipientInput').value = name;
+    }
+  </script>
+
+</body>
+</html>

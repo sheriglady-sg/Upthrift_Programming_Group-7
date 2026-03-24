@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – <%= convo.name %></title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('partials/topbar') %>
+
+  <div class="app-shell">
+    <%- include('partials/sidebar', { activePage }) %>
+
+    <main class="main-content main-content--chatbox">
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <a href="/messages" class="back-link chat-back">
+            <!-- REPLACE: back arrow icon -->
+            <span class="back-arrow">←</span>
+          </a>
+          <div class="chat-header-info">
+            <h2 class="chat-name"><%= convo.name %></h2>
+            <span class="chat-status">Active 5m ago</span>
+          </div>
+        </div>
+        <button class="chat-more-btn" aria-label="More options">
+          <!-- REPLACE: three dots / kebab icon -->
+          <span class="more-dots">⋮</span>
+        </button>
+      </div>
+
+      <hr class="chat-divider" />
+
+      <!-- Messages area -->
+      <div class="chat-messages" id="chatMessages">
+
+        <!-- Date separator -->
+        <div class="date-separator">
+          <span class="date-label">Today</span>
+        </div>
+
+        <% convo.messages.forEach(msg => { %>
+          <% if (msg.from === 'them') { %>
+          <div class="bubble-row bubble-row--them">
+            <div class="bubble bubble--them">
+              <p class="bubble-text"><%= msg.text %></p>
+              <span class="bubble-time"><%= msg.time %></span>
+            </div>
+          </div>
+          <% } else { %>
+          <div class="bubble-row bubble-row--me">
+            <div class="bubble bubble--me">
+              <p class="bubble-text"><%= msg.text %></p>
+              <span class="bubble-time bubble-time--me"><%= msg.time %></span>
+            </div>
+          </div>
+          <% } %>
+        <% }) %>
+
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <div class="chat-input-actions">
+            <!-- REPLACE: paperclip icon -->
+            <button class="chat-action-btn" aria-label="Attach file">
+              <span class="chat-action-icon">📎</span>
+            </button>
+            <!-- REPLACE: image icon -->
+            <button class="chat-action-btn" aria-label="Send image">
+              <span class="chat-action-icon">🖼</span>
+            </button>
+          </div>
+          <input
+            type="text"
+            class="chat-input"
+            id="chatInput"
+            placeholder="Type your message..."
+          />
+          <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message">
+            <!-- REPLACE: send/paper-plane icon -->
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+        <p class="chat-input-hint">Press Enter to send, Shift+Enter for new line</p>
+      </div>
+
+    </main>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    // Scroll to bottom on load
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Send message on Enter
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('chatSendBtn');
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      const row = document.createElement('div');
+      row.className = 'bubble-row bubble-row--me';
+
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      row.innerHTML = `
+        <div class="bubble bubble--me">
+          <p class="bubble-text">${text}</p>
+          <span class="bubble-time bubble-time--me">${time}</span>
+        </div>`;
+
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      input.value = '';
+    }
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    sendBtn.addEventListener('click', sendMessage);
+  </script>
+
+</body>
+</html>

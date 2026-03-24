@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – Messages</title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('partials/topbar') %>
+
+  <div class="app-shell">
+    <%- include('partials/sidebar', { activePage }) %>
+
+    <main class="main-content main-content--messages">
+
+      <!-- Header row -->
+      <div class="messages-header-row">
+        <div class="messages-header-text">
+          <h1 class="page-title messages-title">Messages</h1>
+          <p class="messages-subtitle">Chat with other UPTHRIFT community members</p>
+        </div>
+        <a href="/messages/new" class="btn-new-message">
+          <!-- REPLACE: chat bubble icon -->
+          <span class="new-msg-icon">💬</span> New Message
+        </a>
+      </div>
+
+      <!-- Search bar -->
+      <div class="msg-search-wrap">
+        <!-- REPLACE: search icon -->
+        <span class="msg-search-icon">🔍</span>
+        <input
+          type="text"
+          class="msg-search-input"
+          placeholder="Search conversations..."
+          id="msgSearch"
+          oninput="filterConversations(this.value)"
+        />
+      </div>
+
+      <!-- Conversations list -->
+      <div class="conversations-list" id="conversationsList">
+        <% conversations.forEach(convo => { %>
+        <a href="/messages/<%= convo.id %>" class="conversation-item" data-name="<%= convo.name.toLowerCase() %>">
+          <div class="convo-avatar"><%= convo.initials %></div>
+          <div class="convo-body">
+            <div class="convo-top-row">
+              <span class="convo-name"><%= convo.name %></span>
+              <span class="convo-time"><%= convo.timeAgo %></span>
+            </div>
+            <p class="convo-preview"><%= convo.lastMessage %></p>
+          </div>
+        </a>
+        <% }) %>
+      </div>
+    </main>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    function filterConversations(query) {
+      const items = document.querySelectorAll('.conversation-item');
+      items.forEach(item => {
+        const name = item.dataset.name || '';
+        item.style.display = name.includes(query.toLowerCase()) ? '' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>
