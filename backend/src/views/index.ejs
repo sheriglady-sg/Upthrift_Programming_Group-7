@@ -5,48 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UpThrift | Landing Page</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body class="landing-page">
 
-    <nav class="navbar">
-        <div class="nav-logo">UpThrift</div>
-        <div class="nav-links">
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-            <a href="/login" class="login-btn">Login</a>
+    <header class="topbar">
+        <div class="logo-link">
+            <span class="logo-text">UpThrift</span>
         </div>
-    </nav>
+        <div class="topbar-actions">
+            <a href="/about" class="footer-link">About</a>
+            <a href="/contact" class="footer-link">Contact</a>
+            <a href="/login" class="btn-create-post">Login</a>
+        </div>
+    </header>
 
-    <main>
-        <section class="hero">
-            <span class="badge">LANDING PAGE</span>
-            <h1 class="hero-title">Share Thrift Finds, Upcycling Ideas</h1>
-            <p class="hero-subtitle">
+    <main class="main-content">
+        
+        <section class="post-card post-card--detail" style="text-align: center; padding: 60px 20px;">
+            <span class="breadcrumb">LANDING PAGE</span>
+            <h1 class="page-title" style="font-size: 42px; margin-top: 20px;">Share Thrift Finds, Upcycling Ideas</h1>
+            <p class="post-content" style="font-size: 16px; color: var(--color-text-secondary); margin-bottom: 30px;">
                 Discover local thrift stores and events. Join a community of <br>
                 sustainable shoppers and creative upcyclers.
             </p>
-            <a href="/get-started" class="cta-btn">Get Started</a>
+            <a href="/get-started" class="btn-post" style="padding: 12px 40px; text-decoration: none; display: inline-block; width: auto;">Get Started</a>
         </section>
 
-        <section class="features">
-            <div class="feature-card">
-                <div class="placeholder-img">Share Finds</div>
-                <h3>Share Your Finds</h3>
-                <p>Upload photos and videos of your amazing thrift store discoveries</p>
-            </div>
+        <div class="posts-list">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                
+                <div class="post-card">
+                    <div class="post-media-placeholder">Share Finds</div>
+                    <h3 class="post-author">Share Your Finds</h3>
+                    <p class="post-content">Upload photos and videos of your amazing thrift store discoveries</p>
+                </div>
 
-            <div class="feature-card">
-                <div class="placeholder-img">Discover Stores</div>
-                <h3>Find Local Stores</h3>
-                <p>Explore thrift stores near you with reviews and details</p>
-            </div>
+                <div class="post-card">
+                    <div class="post-media-placeholder">Discover Stores</div>
+                    <h3 class="post-author">Find Local Stores</h3>
+                    <p class="post-content">Explore thrift stores near you with reviews and details</p>
+                </div>
 
-            <div class="feature-card">
-                <div class="placeholder-img">Join Events</div>
-                <h3>Attend Events</h3>
-                <p>Discover and RSVP to local thrifting events and meetups</p>
+                <div class="post-card">
+                    <div class="post-media-placeholder">Join Events</div>
+                    <h3 class="post-author">Attend Events</h3>
+                    <p class="post-content">Discover and RSVP to local thrifting events and meetups</p>
+                </div>
+
             </div>
-        </section>
+        </div>
     </main>
 
     <%- include('components/footer') %>
