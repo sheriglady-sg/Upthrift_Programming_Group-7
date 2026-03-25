@@ -27,11 +27,16 @@
 
       <!-- Post Card -->
       <div class="post-card post-card--detail">
-        <div class="post-header">
-          <!-- REPLACE: User avatar -->
-          <div class="avatar-placeholder small"></div>
-          <div class="post-meta">
-            <span class="post-author"><%= post.author %></span>
+          <div class="post-header">
+            <!-- Avatar links to user profile -->
+            <a href="/user/<%= post.authorSlug %>" class="post-author-link">
+              <div class="avatar-placeholder small"></div>
+            </a>
+            <div class="post-meta">
+              <!-- Author name links to user profile -->
+              <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
+                <%= post.author %>
+              </a>
             <span class="post-time"><%= post.fullDate || post.timeAgo %></span>
           </div>
         </div>

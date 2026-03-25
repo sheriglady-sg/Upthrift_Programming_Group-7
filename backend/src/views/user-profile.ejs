@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – <%= user.fullName %></title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('components/topbar') %>
+
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
+
+    <main class="main-content main-content--profile">
+
+      <!-- Back + breadcrumb -->
+      <div class="page-header-row page-header-row--details">
+        <a href="/feed" class="back-link">
+          <span class="back-arrow">←</span> Back to Feed
+        </a>
+        <span class="breadcrumb-tag">USER PROFILE</span>
+      </div>
+
+      <!-- Profile card -->
+      <div class="profile-card">
+        <div class="profile-card-inner">
+          <!-- Avatar -->
+          <div class="profile-avatar-wrap">
+            <!-- REPLACE: <img src="/images/avatar.jpg" class="profile-avatar-img"> -->
+            <div class="profile-avatar-placeholder"><%= user.initials %></div>
+          </div>
+
+          <!-- Info -->
+          <div class="profile-info">
+            <div class="profile-info-top">
+              <div>
+                <h1 class="profile-name"><%= user.fullName %></h1>
+                <p class="profile-username"><%= user.username %></p>
+                <p class="profile-bio"><%= user.bio %></p>
+                <div class="profile-stats">
+                  <span class="profile-stat"><strong><%= user.posts %></strong> Posts</span>
+                  <span class="profile-stat"><strong><%= user.followers %></strong> Followers</span>
+                  <span class="profile-stat"><strong><%= user.following %></strong> Following</span>
+                </div>
+              </div>
+              <!-- Follow + Message buttons -->
+              <div class="profile-actions">
+                <button class="btn-follow">Follow</button>
+                <a href="/messages" class="btn-profile-action btn-message-action">
+                  <!-- REPLACE: envelope icon -->
+                  <span class="profile-action-icon">✉️</span> Message
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs: Posts | About -->
+      <div class="profile-tabs">
+        <a href="/user/<%= user.slug %>?tab=posts" class="profile-tab <%= activeTab === 'posts' ? 'profile-tab--active' : '' %>">
+          <!-- REPLACE: grid icon -->
+          <span class="tab-icon">⊞</span> Posts
+        </a>
+        <a href="/user/<%= user.slug %>?tab=about" class="profile-tab <%= activeTab === 'about' ? 'profile-tab--active' : '' %>">
+          About
+        </a>
+      </div>
+
+      <!-- Grid or About content -->
+      <% if (activeTab === 'posts') { %>
+      <div class="profile-grid">
+        <% user.postImages.forEach(p => { %>
+        <div class="profile-grid-item">
+          <div class="profile-grid-placeholder"><%= p.label %></div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="user-about-card">
+        <p class="user-about-text"><%= user.about %></p>
+      </div>
+      <% } %>
+
+    </main>
+  </div>
+
+  <%- include('components/footerlogin') %>
+
+</body>
+</html>

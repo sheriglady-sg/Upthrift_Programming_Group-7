@@ -11,10 +11,10 @@
 </head>
 <body>
 
-  <%- include('partials/topbar') %>
+  <%- include('components/topbar') %>
 
-  <div class="app-shell">
-    <%- include('partials/sidebar', { activePage }) %>
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
 
     <main class="main-content main-content--new-msg">
 
@@ -98,7 +98,7 @@
     </main>
   </div>
 
-  <%- include('partials/footer') %>
+  <%- include('components/footerlogin') %>
 
   <script>
     function filterUsers(query) {

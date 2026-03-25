@@ -117,7 +117,7 @@ input, textarea { font-family: inherit; }
 /* =========================================
    APP SHELL  (sidebar + main)
    ========================================= */
-.app-shell {
+.navigation {
   display: flex;
   flex: 1;
   width: 100%;

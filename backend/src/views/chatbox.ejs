@@ -11,10 +11,10 @@
 </head>
 <body>
 
-  <%- include('partials/topbar') %>
+  <%- include('components/topbar') %>
 
-  <div class="app-shell">
-    <%- include('partials/sidebar', { activePage }) %>
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
 
     <main class="main-content main-content--chatbox">
 
@@ -26,7 +26,7 @@
             <span class="back-arrow">←</span>
           </a>
           <div class="chat-header-info">
-            <h2 class="chat-name"><%= convo.name %></h2>
+            <% if (convo.userSlug) { %><a href="/user/<%= convo.userSlug %>" class="chat-name chat-name-link"><%= convo.name %></a><% } else { %><h2 class="chat-name"><%= convo.name %></h2><% } %>
             <span class="chat-status">Active 5m ago</span>
           </div>
         </div>
@@ -96,7 +96,7 @@
     </main>
   </div>
 
-  <%- include('partials/footer') %>
+  <%- include('components/footerlogin') %>
 
   <script>
     // Scroll to bottom on load
