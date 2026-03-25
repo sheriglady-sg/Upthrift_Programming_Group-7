@@ -26,6 +26,26 @@ app.get('/contact', (req, res) => {
     res.render('contact');
 });
 
+//about page
+app.get('/about', (req, res) => {
+    res.render('about');
+});
+
+//signup page
+app.get('/signup', (req, res) => {
+    res.render('signup');
+});
+
+//login page
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+//forget password
+app.get('/forget-password', (req, res) => {
+    res.render('forget-password');
+});
+
 // database test route
 app.get("/test-db", async (req, res) => {
     try {
