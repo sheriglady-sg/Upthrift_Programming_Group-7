@@ -21,6 +21,11 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+//contact page
+app.get('/contact', (req, res) => {
+    res.render('contact');
+});
+
 // database test route
 app.get("/test-db", async (req, res) => {
     try {
