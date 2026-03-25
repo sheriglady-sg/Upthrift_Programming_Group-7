@@ -5,32 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 </head>
-<body class="contact-page">
+<body class="contact-page-v2">
 
-     <%- include('components/topbar') %>
+    <%- include('components/topbar-guest') %>
 
     <main class="split-container">
         <section class="form-side">
             <div class="form-content">
-                <span class="badge">CONTACT</span>
-                <h1>Get in Touch</h1>
-                <p class="subtitle">Have questions or feedback? We'd love to hear from you.</p>
+                <span class="breadcrumb">CONTACT</span>
+                <h1 class="page-title" style="margin-top: 15px;">Get in Touch</h1>
+                <p class="post-content" style="margin-bottom: 30px; color: var(--color-text-secondary);">
+                    Have questions or feedback? We'd love to hear from you.
+                </p>
 
                 <form action="/send-message" method="POST" class="styled-form">
-                    <div class="input-field">
-                        <label>Name</label>
-                        <input type="text" name="name" placeholder="Your name">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="comment-input" placeholder="Your name">
                     </div>
-                    <div class="input-field">
-                        <label>Email</label>
-                        <input type="email" name="email" placeholder="your@email.com">
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="comment-input" placeholder="your@email.com">
                     </div>
-                    <div class="input-field">
-                        <label>Message</label>
-                        <textarea name="message" rows="4" placeholder="Your message..."></textarea>
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="form-label">Message</label>
+                        <textarea name="message" class="comment-input" style="height: 120px; border-radius: 12px; padding-top: 12px;" placeholder="Your message..."></textarea>
                     </div>
-                    <button type="submit" class="send-btn">Send Message</button>
+                    
+                    <button type="submit" class="btn-post" style="width: 100%; margin-top: 20px; border: none; cursor: pointer;">
+                        Send Message
+                    </button>
                 </form>
             </div>
         </section>
