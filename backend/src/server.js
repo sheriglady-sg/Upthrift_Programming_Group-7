@@ -14,7 +14,7 @@ app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
 
 // static
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
 //home page
 app.get("/", (req, res) => {
