@@ -27,17 +27,58 @@
 
       <h1 class="page-title">Share Your Find</h1>
 
+      <% if (message) { %>
+        <div class="form-message success-message"><%= message %></div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="form-message error-message"><%= error %></div>
+      <% } %>
+
       <div class="create-post-form-wrapper">
-        <form action="/create-post" method="POST" enctype="multipart/form-data" class="create-post-form">
+        <form action="/posts" method="POST" class="create-post-form">
+
+          <div class="form-group">
+            <label class="form-label">User ID</label>
+            <input
+              class="form-input"
+              type="number"
+              name="user_id"
+              value="<%= userId %>"
+              placeholder="Enter your user id"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" name="category" required>
+              <option value="">Select a category</option>
+              <option value="Thrift Find">Thrift Find</option>
+              <option value="Upcycling">Upcycling</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Home Decor">Home Decor</option>
+            </select>
+          </div>
 
           <div class="form-group">
             <label class="form-label">Description</label>
             <textarea
               class="form-textarea"
-              name="description"
+              name="caption"
               placeholder="Tell us about your thrift find or upcycling project..."
               rows="3"
             ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input
+              class="form-input"
+              type="text"
+              name="location_tag"
+              placeholder="Optional location"
+            />
           </div>
 
           <div class="form-group">
@@ -46,9 +87,10 @@
               <!-- REPLACE: Upload icon -->
               <div class="upload-icon-placeholder">↑</div>
               <p class="upload-label">Drag and drop your photos or videos here</p>
+              <p class="upload-note">Preview only for now. Media upload is not connected to the database yet.</p>
               <p class="upload-or">or</p>
               <button type="button" class="btn-browse" onclick="document.getElementById('fileInput').click()">Browse Files</button>
-              <input type="file" id="fileInput" name="media" accept="image/*,video/*" multiple style="display:none" onchange="handleFiles(this.files)" />
+              <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none" onchange="handleFiles(this.files)" />
             </div>
 
             <div class="upload-type-btns">

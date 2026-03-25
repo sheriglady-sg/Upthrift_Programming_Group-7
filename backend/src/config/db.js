@@ -1,11 +1,13 @@
-const mysql = require('mysql2/promise');// import mysql2/promise for async/await support
-require('dotenv').config();// read content of .env file
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
-const pool = mysql.createPool({// create a connection pool to database, reuseable connections for better performance
+const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10
 });
 
-module.exports = pool;// export, other application files can use
+module.exports = pool;

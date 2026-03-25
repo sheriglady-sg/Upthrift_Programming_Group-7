@@ -55,10 +55,18 @@
                 <h1 class="page-title">Create Account</h1>
                 <p class="post-content" style="margin-bottom: 25px; font-family: var(--font-body);">Join the UPTHRIFT community</p>
 
+                <% if (message) { %>
+                    <div class="form-message success-message"><%= message %></div>
+                <% } %>
+
+                <% if (error) { %>
+                    <div class="form-message error-message"><%= error %></div>
+                <% } %>
+
                 <form action="/auth/signup" method="POST" class="styled-form" style="max-width: 420px;">
                     <div class="form-group">
-                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Full Name</label>
-                        <input type="text" name="fullname" class="comment-input" placeholder="Jane Doe" required>
+                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Username</label>
+                        <input type="text" name="username" class="comment-input" placeholder="JaneDoe" required>
                     </div>
 
                     <div class="form-group" style="margin-top: 15px;">

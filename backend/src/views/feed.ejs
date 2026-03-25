@@ -16,7 +16,7 @@
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
- <main class="main-content">
+    <main class="main-content">
       <div class="page-header-row">
         <nav class="breadcrumb">HOME/FEED</nav>
         <a href="/create-post" class="btn-create-post">
@@ -25,21 +25,24 @@
       </div>
 
       <h1 class="page-title">Your Feed</h1>
+
+      <% if (message) { %>
+      <div class="form-message success-message"><%= message %></div>
+      <% } %>
+
+      <% if (error) { %>
+      <div class="form-message error-message"><%= error %></div>
+      <% } %>
+
       <div class="feed-scroll-hint">View Feed / Scroll</div>
 
       <div class="posts-list">
         <% posts.forEach(post => { %>
         <article class="post-card">
           <div class="post-header">
-            <!-- Avatar links to user profile -->
-            <a href="/user/<%= post.authorSlug %>" class="post-author-link">
-              <div class="avatar-placeholder small"></div>
-            </a>
+            <div class="avatar-placeholder small"></div>
             <div class="post-meta">
-              <!-- Author name links to user profile -->
-              <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
-                <%= post.author %>
-              </a>
+              <span class="post-author"><%= post.author %></span>
               <span class="post-time"><%= post.timeAgo %></span>
             </div>
           </div>

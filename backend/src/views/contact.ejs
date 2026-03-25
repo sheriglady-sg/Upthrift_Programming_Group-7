@@ -15,29 +15,33 @@
         <section class="form-side">
             <div class="form-content" style="padding: 40px 10%;">
                 <span class="breadcrumb" style="font-family: var(--font-body);">CONTACT</span>
-                
+
                 <h1 class="page-title" style="font-family: var(--font-display); font-size: 36px; margin-top: 15px;">Get in Touch</h1>
-                
+
                 <p class="post-content" style="font-family: var(--font-body); margin-bottom: 30px; color: var(--color-text-secondary);">
                     Have questions or feedback? We'd love to hear from you.
                 </p>
+
+                <% if (message) { %>
+                    <div class="form-message success-message"><%= message %></div>
+                <% } %>
 
                 <form action="/send-message" method="POST" class="styled-form">
                     <div class="form-group">
                         <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Name</label>
                         <input type="text" name="name" class="comment-input" style="font-family: var(--font-body);" placeholder="Your name">
                     </div>
-                    
+
                     <div class="form-group" style="margin-top: 15px;">
                         <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Email</label>
                         <input type="email" name="email" class="comment-input" style="font-family: var(--font-body);" placeholder="your@email.com">
                     </div>
-                    
+
                     <div class="form-group" style="margin-top: 15px;">
                         <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Message</label>
                         <textarea name="message" class="comment-input" style="font-family: var(--font-body); height: 120px; border-radius: 12px; padding-top: 12px;" placeholder="Your message..."></textarea>
                     </div>
-                    
+
                     <button type="submit" class="btn-post" style="font-family: var(--font-body); width: 100%; margin-top: 20px; border: none; cursor: pointer; font-weight: 600;">
                         Send Message
                     </button>

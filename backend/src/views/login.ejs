@@ -63,6 +63,14 @@
                 <h1 class="page-title">Welcome Back</h1>
                 <p class="post-content" style="margin-bottom: 30px; font-family: var(--font-body);">Sign in to your account</p>
 
+                <% if (message) { %>
+                    <div class="form-message success-message"><%= message %></div>
+                <% } %>
+
+                <% if (error) { %>
+                    <div class="form-message error-message"><%= error %></div>
+                <% } %>
+
                 <form action="/auth/login" method="POST" class="styled-form" style="max-width: 400px;">
                     <div class="form-group">
                         <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Email</label>

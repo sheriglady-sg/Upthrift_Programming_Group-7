@@ -6,7 +6,7 @@ body {
 
 /* Split Layout for Contact Page */
 .contact-page-v2 {
-    background-color: #e9ece6; /* Light gray-green background */
+    background-color: #e9ece6;
     margin: 0;
 }
 
@@ -20,12 +20,11 @@ body {
 
 .split-container {
     display: flex;
-    min-height: 80vh; /* Adjust height based on footer size */
+    min-height: 80vh;
 }
 
-/* Left Column */
 .form-side {
-    flex: 1; /* Takes 50% width */
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -48,11 +47,11 @@ body {
     margin-bottom: 5px;
 }
 
-.styled-form input, 
+.styled-form input,
 .styled-form textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid white; /* Border is white to look clean */
+    border: 1px solid white;
     border-radius: 8px;
     background: white;
     font-size: 0.9rem;
@@ -69,23 +68,22 @@ body {
     margin-top: 10px;
 }
 
-/* Right Column */
 .image-side {
-    flex: 1; /* Takes 50% width */
+    flex: 1;
 }
 
 .image-side img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* This makes the image fill the area without stretching */
+    object-fit: cover;
     display: block;
 }
 
-/* Responsive: Stack them on mobile */
 @media (max-width: 768px) {
     .split-container {
         flex-direction: column;
     }
+
     .image-side {
         height: 300px;
     }
