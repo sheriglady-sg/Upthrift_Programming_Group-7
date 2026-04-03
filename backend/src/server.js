@@ -51,6 +51,18 @@ app.get("/get-started", (req, res) => {
     res.redirect("/signup");
 });
 
+app.get('/settings', (req, res) => {
+    res.render('settings', { 
+        activePage: 'profile' 
+    }); 
+});
+
+app.get('/notifications', (req, res) => {
+    res.render('notifications', { 
+        activePage: 'messages' 
+    }); 
+});
+
 app.get("/feed", postController.getFeedPage);
 app.get("/create-post", postController.getCreatePostPage);
 app.get("/post/:id", postController.getPostDetailsPage);

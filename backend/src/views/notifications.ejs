@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | UpThrift</title>
+    <link rel="stylesheet" href="/css/mainlogin.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        .notifications-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            min-height: 85vh;
+            align-items: flex-start;
+            background-color: #fdfdfb;
+        }
+
+        .notifications-main {
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 900px;
+        }
+
+        
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .notification-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: var(--color-accent);
+        }
+
+       
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .type-like { background-color: #fff0f0; color: #ff4d4f; }
+        .type-comment { background-color: #f0f7ff; color: #1890ff; }
+        .type-follow { background-color: #f6ffed; color: #52c41a; }
+        .type-system { background-color: #fff7e6; color: #faad14; }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .notif-title span {
+            font-weight: 400;
+            color: #666;
+        }
+
+        .notif-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        
+        .load-more {
+            margin: 40px auto;
+            display: block;
+            background: none;
+            border: none;
+            color: #888;
+            font-family: var(--font-body);
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body style="font-family: var(--font-body);">
+
+    <%- include('components/topbar') %>
+
+    <div class="notifications-container">
+        <%- include('components/sidebar') %>
+
+        <main class="notifications-main">
+            <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Notifications</h1>
+
+            <div class="notification-list">
+                
+                <div class="notification-card">
+                    <div class="icon-circle type-like">❤️</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Mike R. <span>liked your post</span></div>
+                        <div class="notif-time">5 minutes ago</div>
+                    </div>
+                </div>
+
+                <div class="notification-card">
+                    <div class="icon-circle type-comment">💬</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Emma L. <span>commented on your post</span></div>
+                        <div class="notif-time">1 hour ago</div>
+                    </div>
+                </div>
+
+                <div class="notification-card">
+                    <div class="icon-circle type-follow">👤</div>
+                    <div class="notif-content">
+                        <div class="notif-title">John D. <span>started following you</span></div>
+                        <div class="notif-time">2 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="notification-card">
+                    <div class="icon-circle type-system">📅</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Spring Thrift Sale <span>is starting tomorrow</span></div>
+                        <div class="notif-time">3 hours ago</div>
+                    </div>
+                </div>
+
+                <div class="notification-card">
+                    <div class="icon-circle type-like">❤️</div>
+                    <div class="notif-content">
+                        <div class="notif-title">Alex K. <span>liked your post</span></div>
+                        <div class="notif-time">5 hours ago</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="load-more">Load More Notifications</button>
+        </main>
+    </div>
+
+    <%- include('components/footer') %>
+
+</body>
+</html>
