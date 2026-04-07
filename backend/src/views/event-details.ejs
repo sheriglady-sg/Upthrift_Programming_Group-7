@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – <%= event.title %></title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('components/topbar') %>
+  <div class="navigation">
+     <%- include('components/sidebar', { activePage }) %>
+    <main class="main-content main-content--event-detail">
+
+      <!-- Back nav -->
+      <div class="page-header-row page-header-row--details" style="margin-bottom:20px;">
+        <a href="/events" class="back-link"><span class="back-arrow">←</span> Back to Events</a>
+        <span class="breadcrumb-tag">EVENTS PAGE</span>
+      </div>
+
+      <!-- Cover image -->
+      <div class="event-detail-card">
+        <div class="event-cover-placeholder">
+          <!-- REPLACE: <img src="/images/<%= event.slug %>.jpg" class="event-cover-img"> -->
+          Event Cover Image
+        </div>
+
+        <!-- Info grid -->
+        <div class="event-detail-body">
+          <h1 class="event-detail-title"><%= event.title %></h1>
+
+          <div class="event-detail-grid">
+            <div class="event-detail-col">
+              <div class="event-detail-field">
+                <span class="event-field-icon">📅</span>
+                <div>
+                  <p class="event-field-label">Date</p>
+                  <p class="event-field-value"><%= event.date %></p>
+                </div>
+              </div>
+              <div class="event-detail-field">
+                <span class="event-field-icon">🕐</span>
+                <div>
+                  <p class="event-field-label">Time</p>
+                  <p class="event-field-value"><%= event.time %></p>
+                </div>
+              </div>
+            </div>
+            <div class="event-detail-col">
+              <div class="event-detail-field">
+                <span class="event-field-icon">📍</span>
+                <div>
+                  <p class="event-field-label">Location</p>
+                  <p class="event-field-value"><%= event.location %></p>
+                  <p class="event-field-value event-field-sub"><%= event.address %></p>
+                </div>
+              </div>
+              <div class="event-detail-field">
+                <span class="event-field-icon">👥</span>
+                <div>
+                  <p class="event-field-label">Attendees</p>
+                  <p class="event-field-value"><%= event.attendees %> people attending</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- About -->
+          <h2 class="event-about-title">About This Event</h2>
+          <p class="event-about-text"><%= event.about %></p>
+
+          <!-- Action buttons -->
+          <div class="event-detail-actions">
+            <form action="/events/<%= event.slug %>/rsvp" method="POST" style="flex:1;">
+              <button type="submit" class="btn-rsvp-detail">RSVP to Event</button>
+            </form>
+            <button class="btn-reminder">
+              <span>🔔</span> Set Reminder
+            </button>
+            <button class="btn-directions">
+              <span>📍</span> Directions
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendees card -->
+      <div class="attendees-card">
+        <h3 class="attendees-title">Attendees</h3>
+        <div class="attendees-row">
+          <% for(let i = 0; i < event.attendeeAvatars; i++) { %>
+          <div class="attendee-bubble"></div>
+          <% } %>
+          <div class="attendee-bubble attendee-bubble--count">+<%= event.attendeeExtra %></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  <%- include('components/footerlogin') %>
+</body>
+</html>

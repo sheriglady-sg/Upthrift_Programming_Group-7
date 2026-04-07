@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – <%= store.name %></title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('components/topbar') %>
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
+    <main class="main-content main-content--store">
+
+      <!-- Back nav -->
+      <div class="page-header-row page-header-row--details" style="margin-bottom:20px;">
+        <a href="/discover" class="back-link"><span class="back-arrow">←</span> Back to Discover</a>
+        <span class="breadcrumb-tag">STORE PAGE: DETAILS + REVIEWS</span>
+      </div>
+
+      <!-- Store detail card -->
+      <div class="store-detail-card">
+
+        <!-- Photos placeholder -->
+        <div class="store-photos-placeholder">
+          <!-- REPLACE: store photo gallery / carousel -->
+          Store Photos
+        </div>
+
+        <!-- Store info -->
+        <div class="store-detail-body">
+          <h1 class="store-detail-name"><%= store.name %></h1>
+
+          <div class="store-detail-rating">
+            <span class="store-star store-star--lg">★</span>
+            <span class="store-rating-num"><%= store.rating %></span>
+            <span class="store-reviews-count">(<%= store.reviewCount %> reviews)</span>
+          </div>
+
+          <div class="store-detail-fields">
+            <div class="store-detail-field">
+              <span class="store-field-icon">📍</span>
+              <div>
+                <p class="store-field-label">Address</p>
+                <p class="store-field-value"><%= store.address %></p>
+              </div>
+            </div>
+            <div class="store-detail-field">
+              <span class="store-field-icon">🕐</span>
+              <div>
+                <p class="store-field-label">Hours</p>
+                <p class="store-field-value"><%= store.hours %></p>
+              </div>
+            </div>
+            <div class="store-detail-field">
+              <span class="store-field-icon">📞</span>
+              <div>
+                <p class="store-field-label">Contact</p>
+                <p class="store-field-value"><%= store.contact %></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="store-action-btns">
+            <button class="btn-get-directions">
+              <!-- REPLACE: pin icon -->
+              <span>📍</span> Get Directions
+            </button>
+            <button class="btn-website">
+              <!-- REPLACE: external link icon -->
+              <span>↗</span> Website
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews section -->
+      <section class="store-reviews-section">
+        <h2 class="store-reviews-title">Reviews</h2>
+
+        <div class="store-reviews-list">
+          <% store.reviews.forEach(review => { %>
+          <div class="store-review-card">
+            <div class="store-review-header">
+              <div class="review-avatar"><%= review.initials %></div>
+              <div class="review-meta">
+                <div class="review-top-row">
+                  <span class="review-author"><%= review.author %></span>
+                  <div class="review-stars">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                      <span class="review-star <%= i <= review.rating ? 'review-star--filled' : '' %>">★</span>
+                    <% } %>
+                  </div>
+                  <span class="review-time"><%= review.timeAgo %></span>
+                </div>
+                <p class="review-text"><%= review.text %></p>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+
+        <a href="/store/<%= store.slug %>/review" class="btn-write-review">Write a Review</a>
+      </section>
+
+    </main>
+  </div>
+  <%- include('components/footerlogin') %>
+</body>
+</html>

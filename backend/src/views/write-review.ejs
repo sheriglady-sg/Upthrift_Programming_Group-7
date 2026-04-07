@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – Write a Review</title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('components/topbar') %>
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
+    <main class="main-content main-content--write-review">
+
+      <!-- Back nav -->
+      <div class="page-header-row page-header-row--details" style="margin-bottom:20px;">
+        <a href="/store/<%= store.slug %>" class="back-link"><span class="back-arrow">←</span> Back to Store Page</a>
+        <span class="breadcrumb-tag">RATE + WRITE A REVIEW</span>
+      </div>
+
+      <h1 class="page-title">Write a Review</h1>
+
+      <div class="review-form-card">
+
+        <!-- Store summary -->
+        <div class="review-store-summary">
+          <h2 class="review-store-name"><%= store.name %></h2>
+          <div class="review-store-rating">
+            <span class="store-star">★</span>
+            <span class="review-store-rating-num"><%= store.rating %></span>
+            <span class="review-store-review-count">(<%= store.reviewCount %> reviews)</span>
+          </div>
+        </div>
+
+        <form action="/store/<%= store.slug %>/review" method="POST" class="review-form">
+
+          <!-- Star rating -->
+          <div class="review-field">
+            <label class="review-field-label">Rate</label>
+            <div class="star-picker" id="starPicker">
+              <% for(let i = 1; i <= 5; i++) { %>
+              <span class="star-pick" data-value="<%= i %>">★</span>
+              <% } %>
+            </div>
+            <input type="hidden" name="rating" id="ratingInput" value="0" />
+          </div>
+
+          <!-- Review text -->
+          <div class="review-field">
+            <label class="review-field-label">Add Review</label>
+            <textarea
+              name="review"
+              class="review-textarea"
+              placeholder="Provide details, context, or your thoughts..."
+              rows="7"
+            ></textarea>
+          </div>
+
+          <!-- Actions -->
+          <div class="review-form-actions">
+            <a href="/store/<%= store.slug %>" class="btn-review-cancel">Cancel</a>
+            <button type="submit" class="btn-post-review">Post Review</button>
+          </div>
+
+        </form>
+      </div>
+
+    </main>
+  </div>
+  <%- include('components/footerlogin') %>
+
+  <script>
+    // Interactive star picker
+    const stars = document.querySelectorAll('.star-pick');
+    const ratingInput = document.getElementById('ratingInput');
+    let selected = 0;
+
+    stars.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+        const val = parseInt(star.dataset.value);
+        stars.forEach((s, i) => {
+          s.classList.toggle('star-pick--hover', i < val);
+        });
+      });
+      star.addEventListener('mouseleave', () => {
+        stars.forEach((s, i) => {
+          s.classList.remove('star-pick--hover');
+          s.classList.toggle('star-pick--selected', i < selected);
+        });
+      });
+      star.addEventListener('click', () => {
+        selected = parseInt(star.dataset.value);
+        ratingInput.value = selected;
+        stars.forEach((s, i) => s.classList.toggle('star-pick--selected', i < selected));
+      });
+    });
+  </script>
+</body>
+</html>
