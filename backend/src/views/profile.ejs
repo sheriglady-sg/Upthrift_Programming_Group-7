@@ -48,11 +48,13 @@
               <div class="profile-actions">
                 <button class="btn-profile-action">
                   <!-- REPLACE: share icon -->
-                  <span class="profile-action-icon">↗</span> Share Profile
+                  <img src="/images/Navigation.svg" alt="Share Profile" style="height: 18px;">Share Profile
                 </button>
                 <button class="btn-profile-action">
-                  <!-- REPLACE: edit icon -->
-                  <span class="profile-action-icon">✏️</span> Edit Profile
+                  <!-- REPLACE: settings icon -->
+                 <a href="/settings" style="color:inherit;">
+                  <img src="/images/Edit_Pencil_01.svg" alt="Edit Profile" style="height: 18px; margin-right: 5px;">Edit Profile
+                </a>
                 </button>
               </div>
             </div>
@@ -64,11 +66,11 @@
       <div class="profile-tabs">
         <a href="/profile" class="profile-tab <%= activeTab === 'posts' ? 'profile-tab--active' : '' %>">
           <!-- REPLACE: grid icon -->
-          <span class="tab-icon">⊞</span> Posts
+          <img src="/images/Image_01.svg" alt="Posts" style="height: 18px;"> Posts
         </a>
         <a href="/profile/saved" class="profile-tab <%= activeTab === 'saved' ? 'profile-tab--active' : '' %>">
           <!-- REPLACE: bookmark icon -->
-          <span class="tab-icon">🔖</span> Saved Posts
+          <img src="/images/Bookmark.svg" alt="Saved Posts" style="height: 18px;"> Saved Posts
         </a>
       </div>
 

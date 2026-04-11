@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <%- include('components/topbar') %>
   <div class="navigation">
@@ -20,7 +21,9 @@
       <!-- Search + Filter -->
       <form action="/discover" method="GET" class="discover-search-row">
         <div class="discover-search-wrap">
-          <span class="discover-search-icon">🔍</span>
+          <span class="discover-search-icon">
+            <img src="/images/Search.png" alt="Search" style="height: 18px;">
+          </span>
           <input
             type="text"
             name="q"
@@ -45,7 +48,7 @@
               <span class="store-star">★</span>
               <span class="store-rating"><%= store.rating %></span>
               <span class="store-reviews">(<%= store.reviewCount %> reviews)</span>
-              <span class="store-distance-icon">📍</span>
+              <img src="/images/MapPin.png" alt="Location" style="height: 12px;">
               <span class="store-distance"><%= store.distance %></span>
             </div>
             <p class="store-desc"><%= store.description %></p>

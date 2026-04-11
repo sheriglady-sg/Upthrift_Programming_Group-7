@@ -53,7 +53,7 @@
                 <button class="btn-follow">Follow</button>
                 <a href="/messages" class="btn-profile-action btn-message-action">
                   <!-- REPLACE: envelope icon -->
-                  <span class="profile-action-icon">✉️</span> Message
+                  <img src="/images/Mail_01.svg" alt="Message" style="height: 18px;">Message
                 </a>
               </div>
             </div>
@@ -65,7 +65,7 @@
       <div class="profile-tabs">
         <a href="/user/<%= user.slug %>?tab=posts" class="profile-tab <%= activeTab === 'posts' ? 'profile-tab--active' : '' %>">
           <!-- REPLACE: grid icon -->
-          <span class="tab-icon">⊞</span> Posts
+          <img src="/images/Image_01.svg" alt="Posts" style="height: 18px;"> Posts
         </a>
         <a href="/user/<%= user.slug %>?tab=about" class="profile-tab <%= activeTab === 'about' ? 'profile-tab--active' : '' %>">
           About

@@ -6,7 +6,7 @@
     <title>Settings | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-    <style>
+ <style>
         .settings-container {
             display: flex;
             flex-direction: row;
@@ -147,9 +147,9 @@
             <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Settings</h1>
 
             <div class="settings-tabs">
-                <button class="tab-btn active" onclick="openTab(event, 'account-info')">👤 Account Info</button>
-                <button class="tab-btn" onclick="openTab(event, 'profile')">🖼️ Profile</button>
-                <button class="tab-btn" onclick="openTab(event, 'privacy')">🔒 Privacy</button>
+                <button class="tab-btn" onclick="openTab(event, 'account-info')"><img src="/images/User_02.svg" alt="Account Info" style="height: 18px; margin-right: 5px;"> Account Info</button>
+                <button class="tab-btn" onclick="openTab(event, 'profile')"><img src="/images/User_Circle.png" alt="Profile" style="height: 18px; margin-right: 5px;"> Profile</button>
+                <button class="tab-btn" onclick="openTab(event, 'privacy')"><img src="/images/Lock.png" alt="Privacy" style="height: 18px; margin-right: 5px;"> Privacy</button>
             </div>
 
             <div id="account-info" class="settings-section active">
@@ -231,7 +231,7 @@
         </main>
     </div>
 
-    <%- include('components/footer') %>
+    <%- include('components/footerlogin') %>
 
     <script>
         function openTab(evt, tabName) {

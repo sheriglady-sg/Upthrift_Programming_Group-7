@@ -34,16 +34,20 @@
             <h2 class="event-title"><%= event.title %></h2>
             <ul class="event-meta-list">
               <li class="event-meta-item">
-                <span class="event-meta-icon">📅</span> <%= event.date %>
+                <img src="/images/Calendar.png" alt="Date" style="height: 16px;">
+                <%= event.date %>
               </li>
               <li class="event-meta-item">
-                <span class="event-meta-icon">🕐</span> <%= event.time %>
+                <img src="/images/Clock2.png" alt="Time" style="height: 16px;">
+                <%= event.time %>
               </li>
               <li class="event-meta-item">
-                <span class="event-meta-icon">📍</span> <%= event.location %>
+                <img src="/images/MapPin2.png" alt="Location" style="height: 16px;">
+                <%= event.location %>
               </li>
               <li class="event-meta-item">
-                <span class="event-meta-icon">👥</span> <%= event.attendees %> people attending
+                <img src="/images/Users.png" alt="Attendees" style="height: 16px;">
+                <%= event.attendees %> people attending
               </li>
             </ul>
           </div>
@@ -62,3 +66,4 @@
   <%- include('components/footerlogin') %>
 </body>
 </html>
+

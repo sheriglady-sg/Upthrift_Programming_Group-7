@@ -1,18 +1,25 @@
 <header class="topbar">
   <a href="/feed" class="logo-link">
-    <!-- REPLACE: UpThrift logo image <img src="/images/logo.svg" alt="UpThrift" class="logo-img"> -->
-    <span class="logo-text">UpThrift</span>
+    <!-- REPLACE: <img src="/images/logo.svg" alt="UpThrift" class="logo-img"> -->
+    <!-- <span class="logo-text">UpThrift</span> -->
+     <img src="/images/Upthrift_logo2.png" alt="UpThrift" class="logo-img" style="height:130px">
   </a>
   <div class="topbar-actions">
-    <!-- REPLACE: User avatar <img src="/images/avatar.jpg" alt="User" class="topbar-avatar"> -->
-    <div class="avatar-placeholder topbar-avatar-placeholder"></div>
-    <!-- REPLACE: Bell icon  <img src="/images/bell.svg" alt="Notifications"> -->
-    <button class="icon-btn" aria-label="Notifications">
-      <span class="icon-placeholder">🔔</span>
-    </button>
-    <!-- REPLACE: Settings/gear icon <img src="/images/gear.svg" alt="Settings"> -->
-    <button class="icon-btn" aria-label="Settings">
-      <span class="icon-placeholder">⚙️</span>
-    </button>
+    <!-- REPLACE: <img src="/images/avatar.jpg" alt="User" class="topbar-avatar"> -->
+    <a href="/profile">
+      <div class="avatar-placeholder topbar-avatar-placeholder"><img src="/images/ProfileDP.png" alt="User" class="topbar-avatar" style="width:34px;height:34px;border-radius:50%;object-fit:cover"></div>
+    </a>
+    <!-- Bell → Notifications -->
+    <a href="/notifications" class="icon-btn" aria-label="Notifications">
+      <!-- REPLACE: <img src="/images/bell.svg" alt="Notifications"> -->
+      <!-- <span class="icon-placeholder">🔔</span> -->
+      <img src="/images/Bell.svg" alt="Notifications" style="height: 20px;">
+    </a>
+    <!-- Gear → Settings -->
+    <a href="/settings" class="icon-btn" aria-label="Settings">
+      <!-- REPLACE: <img src="/images/gear.svg" alt="Settings"> -->
+      <!-- <span class="icon-placeholder">⚙️</span> -->
+      <img src="/images/Settings.svg" alt="Settings" style="height: 20px;">
+    </a>
   </div>
 </header>
