@@ -23,10 +23,11 @@
 
       <!-- Cover image -->
       <div class="event-detail-card">
-        <div class="event-cover-placeholder">
-          <!-- REPLACE: <img src="/images/<%= event.slug %>.jpg" class="event-cover-img"> -->
-          Event Cover Image
-        </div>
+        <% if (event.cover) { %>
+          <img src="<%= event.cover %>" alt="<%= event.title %>" class="event-cover-img">
+        <% } else { %>
+          <div class="event-cover-placeholder">Event Cover Image</div>
+        <% } %>
 
         <!-- Info grid -->
         <div class="event-detail-body">

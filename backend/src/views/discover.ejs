@@ -40,7 +40,9 @@
         <% stores.forEach(store => { %>
         <div class="store-card">
           <div class="store-card-img">
-            <!-- REPLACE: <img src="/images/<%= store.slug %>.jpg" class="store-thumb"> -->
+            <% if (store.image) { %>
+              <img src="<%= store.image %>" alt="<%= store.name %>" class="store-thumb-img">
+            <% } %>
           </div>
           <div class="store-card-body">
             <h2 class="store-name"><%= store.name %></h2>

@@ -1906,3 +1906,87 @@ select { font-family: inherit; }
     object-fit: cover;
     flex-shrink: 0;
 }
+
+.comment-avatar-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.comment-author-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-decoration: none;
+}
+.comment-author-link:hover {
+    color: var(--color-accent);
+}
+
+/* Store thumbnail in discover list */
+.store-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+/* Store banner on store detail page */
+.store-banner-img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Event thumbnail in events list */
+.event-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+/* Event cover on event detail page */
+.event-cover-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+
+}
+.profile-grid-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+    display: block;
+    transition: opacity 0.15s;
+}
+.profile-grid-item:hover .profile-grid-img {
+    opacity: 0.88;
+}
+
+.convo-avatar-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.chat-header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.convo-avatar--sm {
+    width: 38px;
+    height: 38px;
+    font-size: 11px;
+}

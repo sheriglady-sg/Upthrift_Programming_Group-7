@@ -28,8 +28,7 @@
         <div class="profile-card-inner">
           <!-- Avatar -->
           <div class="profile-avatar-wrap">
-            <!-- REPLACE: <img src="/images/avatar.jpg" class="profile-avatar-img"> -->
-            <div class="profile-avatar-placeholder"><%= profile.initials %></div>
+            <img src="/images/ProfileDP.png" class="profile-avatar-img">
           </div>
 
           <!-- Info -->
@@ -79,13 +78,21 @@
         <% if (activeTab === 'posts') { %>
           <% profile.myPosts.forEach(p => { %>
           <a href="/post/<%= p.id %>" class="profile-grid-item">
-            <div class="profile-grid-placeholder"><%= p.label %></div>
+            <% if (p.image) { %>
+              <img src="<%= p.image %>" alt="<%= p.label %>" class="profile-grid-img">
+            <% } else { %>
+              <div class="profile-grid-placeholder"><%= p.label %></div>
+            <% } %>
           </a>
           <% }) %>
         <% } else { %>
           <% profile.savedPosts.forEach(p => { %>
           <a href="/post/<%= p.id %>" class="profile-grid-item">
-            <div class="profile-grid-placeholder"><%= p.label %></div>
+            <% if (p.image) { %>
+              <img src="<%= p.image %>" alt="<%= p.label %>" class="profile-grid-img">
+            <% } else { %>
+              <div class="profile-grid-placeholder"><%= p.label %></div>
+            <% } %>
           </a>
           <% }) %>
         <% } %>

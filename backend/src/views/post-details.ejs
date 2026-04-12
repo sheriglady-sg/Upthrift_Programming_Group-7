@@ -29,9 +29,13 @@
       <div class="post-card post-card--detail">
           <div class="post-header">
             <!-- Avatar links to user profile -->
-            <a href="/user/<%= post.authorSlug %>" class="post-author-link">
-              <div class="avatar-placeholder small"></div>
-            </a>
+              <a href="/user/<%= post.authorSlug %>" class="post-author-link">
+                <% if (post.authorAvatar) { %>
+                  <img src="<%= post.authorAvatar %>" alt="<%= post.author %>" class="post-avatar-img">
+                <% } else { %>
+                  <div class="avatar-placeholder small"></div>
+                <% } %>
+              </a>
             <div class="post-meta">
               <!-- Author name links to user profile -->
               <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
@@ -77,10 +81,17 @@
         <div class="comments-list">
           <% post.commentList.forEach(comment => { %>
           <div class="comment-item">
-            <!-- REPLACE: User avatar -->
-            <div class="avatar-placeholder xsmall"></div>
+            <a href="/user/<%= comment.authorSlug %>">
+              <% if (comment.authorAvatar) { %>
+                <img src="<%= comment.authorAvatar %>" alt="<%= comment.author %>" class="comment-avatar-img">
+              <% } else { %>
+                <div class="avatar-placeholder xsmall"></div>
+              <% } %>
+            </a>
             <div class="comment-body">
-              <span class="comment-author"><%= comment.author %></span>
+              <a href="/user/<%= comment.authorSlug %>" class="comment-author-link">
+                <%= comment.author %>
+              </a>
               <p class="comment-text"><%= comment.text %></p>
               <span class="comment-time"><%= comment.timeAgo %></span>
             </div>

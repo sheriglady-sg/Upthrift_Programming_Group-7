@@ -26,10 +26,13 @@
       <div class="events-list">
         <% events.forEach(event => { %>
         <div class="event-card">
-          <div class="event-card-img">
-            <!-- REPLACE: <img src="/images/event-<%= event.slug %>.jpg" class="event-thumb"> -->
-            <span class="event-thumb-icon">📅</span>
-          </div>
+            <div class="event-card-img">
+              <% if (event.image) { %>
+                <img src="<%= event.image %>" alt="<%= event.title %>" class="event-thumb-img">
+              <% } else { %>
+                <span class="event-thumb-icon">📅</span>
+              <% } %>
+            </div>
           <div class="event-card-body">
             <h2 class="event-title"><%= event.title %></h2>
             <ul class="event-meta-list">

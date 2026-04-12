@@ -49,7 +49,11 @@
       <div class="conversations-list" id="conversationsList">
         <% conversations.forEach(convo => { %>
         <a href="/messages/<%= convo.id %>" class="conversation-item" data-name="<%= convo.name.toLowerCase() %>">
-          <div class="convo-avatar"><%= convo.initials %></div>
+            <% if (convo.avatar) { %>
+              <img src="<%= convo.avatar %>" alt="<%= convo.name %>" class="convo-avatar-img">
+            <% } else { %>
+              <div class="convo-avatar"><%= convo.initials %></div>
+            <% } %>
           <div class="convo-body">
             <div class="convo-top-row">
               <span class="convo-name"><%= convo.name %></span>

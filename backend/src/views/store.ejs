@@ -25,10 +25,11 @@
       <div class="store-detail-card">
 
         <!-- Photos placeholder -->
-        <div class="store-photos-placeholder">
-          <!-- REPLACE: store photo gallery / carousel -->
-          Store Photos
-        </div>
+          <% if (store.photos) { %>
+            <img src="<%= store.photos %>" alt="<%= store.name %>" class="store-banner-img">
+          <% } else { %>
+            <div class="store-photos-placeholder">Store Photos</div>
+          <% } %>
 
         <!-- Store info -->
         <div class="store-detail-body">
