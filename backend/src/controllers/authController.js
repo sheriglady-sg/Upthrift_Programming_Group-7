@@ -115,8 +115,10 @@ async function login(req, res) {
             });
         }
 
+        req.session.user_id = user.user_id;
+
         if (isHtmlRequest(req)) {
-            return res.redirect(`/create-post?message=Login%20successful&user_id=${user.user_id}`);
+            return res.redirect("/create-post?message=Login%20successful");
         }
 
         return res.json({

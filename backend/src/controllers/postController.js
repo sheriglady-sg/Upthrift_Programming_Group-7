@@ -34,11 +34,12 @@ function formatTimeAgo(dateString) {
 
 async function createPost(req, res) {
     try {
-        const { user_id, caption, category, location_tag } = req.body;
+        const userId = req.session.user_id || req.body.user_id;
+        const { caption, category, location_tag } = req.body;
 
-        if (!user_id || !category) {
+        if (!userId || !category) {
             if (isHtmlRequest(req)) {
-                return res.redirect("/create-post?error=user_id%20and%20category%20are%20required");
+                return res.redirect("/create-post?error=Please%20log%20in%20first");
             }
 
             return res.status(400).json({
@@ -48,7 +49,7 @@ async function createPost(req, res) {
 
         const [result] = await pool.query(
             "INSERT INTO post (user_id, caption, category, location_tag) VALUES (?, ?, ?, ?)",
-            [user_id, caption || null, category, location_tag || null]
+            [userId, caption || null, category, location_tag || null]
         );
 
         if (isHtmlRequest(req)) {
@@ -123,7 +124,7 @@ function getCreatePostPage(req, res) {
         activePage: "feed",
         message: req.query.message || "",
         error: req.query.error || "",
-        userId: req.query.user_id || ""
+        userId: req.session.user_id || req.query.user_id || ""
     });
 }
 

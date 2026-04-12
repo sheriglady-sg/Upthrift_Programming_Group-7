@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
@@ -9,6 +10,11 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: process.env.SESSION_SECRET || "upthrift-session-secret",
+    resave: false,
+    saveUninitialized: false
+}));
 
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
