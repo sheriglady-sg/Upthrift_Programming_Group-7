@@ -32,10 +32,13 @@
         <article class="post-card">
           <div class="post-header">
             <!-- Avatar links to user profile -->
-            <a href="/user/<%= post.authorSlug %>" class="post-author-link">
-              <div class="avatar-placeholder small"></div>
-            </a>
-            <div class="post-meta">
+              <a href="/user/<%= post.authorSlug %>" class="post-author-link">
+                <% if (post.authorAvatar) { %>
+                  <img src="<%= post.authorAvatar %>" alt="<%= post.author %>" class="post-avatar-img">
+                <% } else { %>
+                  <div class="avatar-placeholder small"></div>
+                <% } %>
+              </a>
               <!-- Author name links to user profile -->
               <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
                 <%= post.author %>

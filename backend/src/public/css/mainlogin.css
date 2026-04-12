@@ -1890,3 +1890,19 @@ select { font-family: inherit; }
 .post-media-img--large {
     max-height: 500px;
 }
+
+.post-avatar-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.profile-avatar-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
