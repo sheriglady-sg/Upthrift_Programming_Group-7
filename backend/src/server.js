@@ -22,21 +22,27 @@ app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
-    res.render("index");
+    res.render("index", {
+        activePage: ""
+    });
 });
 
 app.get("/about", (req, res) => {
-    res.render("about");
+    res.render("about", {
+        activePage: "about"
+    });
 });
 
 app.get("/contact", (req, res) => {
     res.render("contact", {
+        activePage: "contact",
         message: req.query.message || ""
     });
 });
 
 app.get("/login", (req, res) => {
     res.render("login", {
+        activePage: "login",
         message: req.query.message || "",
         error: req.query.error || ""
     });
@@ -44,13 +50,18 @@ app.get("/login", (req, res) => {
 
 app.get("/signup", (req, res) => {
     res.render("signup", {
+        activePage: "signup",
         message: req.query.message || "",
         error: req.query.error || ""
     });
 });
 
 app.get("/forget-password", (req, res) => {
-    res.render("forget-password");
+    res.render("forget-password", {
+        activePage: "forget-password",
+        message: req.query.message || "",
+        error: req.query.error || ""
+    });
 });
 
 app.get("/get-started", (req, res) => {

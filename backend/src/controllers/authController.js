@@ -142,8 +142,31 @@ async function login(req, res) {
     }
 }
 
+function forgotPassword(req, res) {
+    const email = req.body.email;
+
+    if (!email) {
+        if (isHtmlRequest(req)) {
+            return res.redirect("/forget-password?error=Email%20is%20required");
+        }
+
+        return res.status(400).json({
+            message: "Email is required"
+        });
+    }
+
+    if (isHtmlRequest(req)) {
+        return res.redirect("/forget-password?message=Reset%20request%20received");
+    }
+
+    return res.json({
+        message: "Reset request received"
+    });
+}
+
 module.exports = {
     signup,
-    login
+    login,
+    forgotPassword
 };
 
