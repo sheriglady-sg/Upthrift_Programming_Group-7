@@ -6,41 +6,80 @@
     <title>UpThrift | Landing Page</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        
+        body.landing-page {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+                              url(/images/texture.jpg); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            margin: 0;
+        }
+
+        
+        .post-card {
+            background: rgba(255, 255, 255, 0.7) !important; 
+            backdrop-filter: blur(5px);
+            margin-bottom: 0px; 
+            border: 1px solid rgba(238, 238, 238, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        
+        .feature-img {
+            width: 100%;
+            height: 200px; 
+            object-fit: cover; 
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
 </head>
 <body class="landing-page" style="font-family: var(--font-body);">
 
     <%- include('components/topbar-guest') %>
 
-    <main class="main-content">
+    <main class="main-content" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px 80px 20px;">
         
-        <section class="post-card post-card--detail" style="text-align: center; padding: 60px 20px;">
-            <span class="breadcrumb" style="font-family: var(--font-body);">LANDING PAGE</span>
-            <h1 class="page-title" style="font-family: var(--font-display); font-size: 42px; margin-top: 20px;">Share Thrift Finds, Upcycling Ideas</h1>
-            <p class="post-content" style="font-family: var(--font-body); font-size: 16px; color: var(--color-text-secondary); margin-bottom: 30px;">
-                Discover local thrift stores and events. Join a community of <br>
+        <section class="post-card post-card--detail" style="text-align: center; padding: 80px 20px; margin-bottom: 40px; border-radius: 16px;">
+            <h1 class="page-title" style="font-family: var(--font-display); font-size: 48px; line-height: 1.1; margin-top: 10px; margin-bottom: 20px; color: #333;">Share Thrift Finds,<br>Upcycling Ideas</h1>
+            <p class="post-content" style="font-family: var(--font-body); font-size: 18px; color: #555; margin-bottom: 40px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Discover local thrift stores and events. Join a community of 
                 sustainable shoppers and creative upcyclers.
             </p>
-           <a href="/signup" class="btn-post" style="font-family: var(--font-body); padding: 12px 40px; text-decoration: none; display: inline-block; width: auto; font-weight: 600; text-align: center;">Get Started</a>
+            <a href="/signup" class="btn-post" style="font-family: var(--font-body); padding: 14px 45px; text-decoration: none; display: inline-block; width: auto; font-weight: 600; text-align: center; font-size: 16px;">Get Started</a>
+        </section>
 
         <div class="posts-list">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%;">
                 
-                <div class="post-card">
-                    <div class="post-media-placeholder" style="font-family: var(--font-display);">Share Finds</div>
-                    <h3 class="post-author" style="font-family: var(--font-display);">Share Your Finds</h3>
-                    <p class="post-content" style="font-family: var(--font-body);">Upload photos and videos of your amazing thrift store discoveries</p>
+                <div class="post-card" style="padding: 25px; border-radius: 12px;">
+                    <img src="/images/finds.jpg" alt="Share Your Finds" class="feature-img">
+                    
+                    <h3 class="post-author" style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; color: #333;">Share Your Finds</h3>
+                    <p class="post-content" style="font-family: var(--font-body); color: #666; font-size: 15px; line-height: 1.5;">Upload photos and videos of your amazing thrift store discoveries and show off your unique style.</p>
                 </div>
 
-                <div class="post-card">
-                    <div class="post-media-placeholder" style="font-family: var(--font-display);">Discover Stores</div>
-                    <h3 class="post-author" style="font-family: var(--font-display);">Find Local Stores</h3>
-                    <p class="post-content" style="font-family: var(--font-body);">Explore thrift stores near you with reviews and details</p>
+                <div class="post-card" style="padding: 25px; border-radius: 12px;">
+                    <img src="/images/stores.jpg" alt="Find Local Stores" class="feature-img">
+                    
+                    <h3 class="post-author" style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; color: #333;">Find Local Stores</h3>
+                    <p class="post-content" style="font-family: var(--font-body); color: #666; font-size: 15px; line-height: 1.5;">Explore curated thrift stores near you with community reviews, ratings, and opening details.</p>
                 </div>
 
-                <div class="post-card">
-                    <div class="post-media-placeholder" style="font-family: var(--font-display);">Join Events</div>
-                    <h3 class="post-author" style="font-family: var(--font-display);">Attend Events</h3>
-                    <p class="post-content" style="font-family: var(--font-body);">Discover and RSVP to local thrifting events and meetups</p>
+                <div class="post-card" style="padding: 25px; border-radius: 12px;">
+                    <img src="/images/events.jpg" alt="Attend Events" class="feature-img">
+                    
+                    <h3 class="post-author" style="font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; color: #333;">Attend Events</h3>
+                    <p class="post-content" style="font-family: var(--font-body); color: #666; font-size: 15px; line-height: 1.5;">Never miss a flea market or upcycling workshop again. RSVP to local thrifting meetups and swap shops.</p>
                 </div>
 
             </div>
