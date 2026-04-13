@@ -1,8 +1,39 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 const router = express.Router();
 const { createPost, getFeed } = require("../controllers/postController");
 
-router.post("/", createPost);
+const uploadFolder = path.join(__dirname, "..", "public", "uploads");
+
+if (!fs.existsSync(uploadFolder)) {
+    fs.mkdirSync(uploadFolder, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadFolder);
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        cb(null, Date.now() + ext);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+            cb(null, true);
+            return;
+        }
+
+        cb(new Error("Only image and video files are allowed"));
+    }
+});
+
+router.post("/", upload.single("media"), createPost);
 router.get("/", getFeed);
 
 module.exports = router;

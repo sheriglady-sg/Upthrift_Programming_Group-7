@@ -36,7 +36,7 @@
       <% } %>
 
       <div class="create-post-form-wrapper">
-        <form action="/posts" method="POST" class="create-post-form">
+        <form action="/posts" method="POST" enctype="multipart/form-data" class="create-post-form">
 
           <div class="form-group">
             <label class="form-label">User ID</label>
@@ -87,10 +87,10 @@
               <!-- REPLACE: Upload icon -->
               <div class="upload-icon-placeholder">↑</div>
               <p class="upload-label">Drag and drop your photos or videos here</p>
-              <p class="upload-note">Preview only for now. Media upload is not connected to the database yet.</p>
+              <p class="upload-note">You can upload one photo or one video for this post.</p>
               <p class="upload-or">or</p>
               <button type="button" class="btn-browse" onclick="document.getElementById('fileInput').click()">Browse Files</button>
-              <input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none" onchange="handleFiles(this.files)" />
+              <input type="file" id="fileInput" name="media" accept="image/*,video/*" style="display:none" onchange="handleFiles(this.files)" />
             </div>
 
             <div class="upload-type-btns">

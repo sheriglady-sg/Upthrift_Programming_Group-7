@@ -45,7 +45,13 @@
           </div>
         </div>
         <p class="post-content"><%= post.content %></p>
-        <img src="<%= post.image %>" alt="<%= post.content %>" class="post-media-img post-media-img--large">
+        <% if (post.image && post.mediaType === "video") { %>
+          <video src="<%= post.image %>" class="post-media-img post-media-img--large" controls></video>
+        <% } else if (post.image) { %>
+          <img src="<%= post.image %>" alt="<%= post.content %>" class="post-media-img post-media-img--large">
+        <% } else { %>
+          <div class="post-media-placeholder post-media-placeholder--large">Post Image/Video</div>
+        <% } %>
         <div class="post-actions">
           <div class="post-actions-left">
             <button class="action-btn like-btn" aria-label="Like">

@@ -16,7 +16,7 @@
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
- <main class="main-content">
+    <main class="main-content">
       <div class="page-header-row">
         <nav class="breadcrumb">HOME/FEED</nav>
         <a href="/create-post" class="btn-create-post">
@@ -31,15 +31,14 @@
         <% posts.forEach(post => { %>
         <article class="post-card">
           <div class="post-header">
-            <!-- Avatar links to user profile -->
-              <a href="/user/<%= post.authorSlug %>" class="post-author-link">
-                <% if (post.authorAvatar) { %>
-                  <img src="<%= post.authorAvatar %>" alt="<%= post.author %>" class="post-avatar-img">
-                <% } else { %>
-                  <div class="avatar-placeholder small"></div>
-                <% } %>
-              </a>
-              <!-- Author name links to user profile -->
+            <a href="/user/<%= post.authorSlug %>" class="post-author-link">
+              <% if (post.authorAvatar) { %>
+                <img src="<%= post.authorAvatar %>" alt="<%= post.author %>" class="post-avatar-img">
+              <% } else { %>
+                <div class="avatar-placeholder small"></div>
+              <% } %>
+            </a>
+            <div class="post-meta">
               <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
                 <%= post.author %>
               </a>
@@ -47,13 +46,15 @@
             </div>
           </div>
           <p class="post-content"><%= post.content %></p>
-          <a href="/post/<%= post.id %>">
-              <% if (post.image) { %>
-                <img src="<%= post.image %>" alt="<%= post.content %>" class="post-media-img">
-              <% } else { %>
-                <div class="post-media-placeholder">Post Image/Video</div>
-              <% } %>
-          </a>
+          <% if (post.image && post.mediaType === "video") { %>
+            <a href="/post/<%= post.id %>">
+              <video src="<%= post.image %>" class="post-media-img" controls></video>
+            </a>
+          <% } else if (post.image) { %>
+            <a href="/post/<%= post.id %>">
+              <img src="<%= post.image %>" alt="<%= post.content %>" class="post-media-img">
+            </a>
+          <% } %>
           <div class="post-actions">
             <div class="post-actions-left">
               <button class="action-btn like-btn" aria-label="Like">

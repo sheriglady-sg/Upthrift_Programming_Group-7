@@ -34,8 +34,9 @@ function formatTimeAgo(dateString) {
 
 async function createPost(req, res) {
     try {
-        const userId = req.session.user_id || req.body.user_id;
-        const { caption, category, location_tag } = req.body;
+        const body = req.body || {};
+        const userId = req.session && req.session.user_id ? req.session.user_id : body.user_id;
+        const { caption, category, location_tag } = body;
 
         if (!userId || !category) {
             if (isHtmlRequest(req)) {
@@ -51,6 +52,16 @@ async function createPost(req, res) {
             "INSERT INTO post (user_id, caption, category, location_tag) VALUES (?, ?, ?, ?)",
             [userId, caption || null, category, location_tag || null]
         );
+
+        if (req.file) {
+            const mediaType = req.file.mimetype.startsWith("video/") ? "video" : "image";
+            const mediaUrl = "/uploads/" + req.file.filename;
+
+            await pool.query(
+                "INSERT INTO post_media (post_id, media_type, meda_url, upload_order) VALUES (?, ?, ?, ?)",
+                [result.insertId, mediaType, mediaUrl, 1]
+            );
+        }
 
         if (isHtmlRequest(req)) {
             return res.redirect("/feed?message=Post%20created%20successfully");
@@ -77,7 +88,7 @@ async function createPost(req, res) {
 async function getFeed(req, res) {
     try {
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.category, p.creation_date, p.location_tag, u.user_id, u.username, u.profile_pic_url FROM post p JOIN user u ON p.user_id = u.user_id WHERE p.is_public = 1 ORDER BY p.creation_date DESC"
+            "SELECT p.post_id, p.caption, p.category, p.creation_date, p.location_tag, u.user_id, u.username, u.profile_pic_url, pm.meda_url, pm.media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.is_public = 1 ORDER BY p.creation_date DESC"
         );
 
         return res.json(posts);
@@ -93,15 +104,19 @@ async function getFeed(req, res) {
 async function getFeedPage(req, res) {
     try {
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.creation_date, u.username, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id WHERE p.is_public = 1 GROUP BY p.post_id, p.caption, p.creation_date, u.username ORDER BY p.creation_date DESC"
+            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.is_public = 1 GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url ORDER BY p.creation_date DESC"
         );
 
         const feedPosts = posts.map((post) => {
             return {
                 id: post.post_id,
                 author: post.username,
+                authorSlug: post.username,
+                authorAvatar: post.profile_pic_url || "",
                 content: post.caption || "No caption",
                 timeAgo: formatTimeAgo(post.creation_date),
+                image: post.media_url || "",
+                mediaType: post.media_type || "",
                 likes: post.likes || 0,
                 comments: post.comments || 0
             };
@@ -124,7 +139,7 @@ function getCreatePostPage(req, res) {
         activePage: "feed",
         message: req.query.message || "",
         error: req.query.error || "",
-        userId: req.session.user_id || req.query.user_id || ""
+        userId: req.session && req.session.user_id ? req.session.user_id : req.query.user_id || ""
     });
 }
 
@@ -133,7 +148,7 @@ async function getPostDetailsPage(req, res) {
         const postId = req.params.id;
 
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.creation_date, u.username, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username",
+            "SELECT p.post_id, p.caption, p.creation_date, u.username, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username",
             [postId]
         );
 
@@ -156,6 +171,8 @@ async function getPostDetailsPage(req, res) {
                 content: post.caption || "No caption",
                 timeAgo: formatTimeAgo(post.creation_date),
                 fullDate: new Date(post.creation_date).toLocaleString(),
+                image: post.media_url || "",
+                mediaType: post.media_type || "",
                 likes: post.likes || 0,
                 comments: post.comments || 0,
                 commentList: commentRows.map((comment) => {
