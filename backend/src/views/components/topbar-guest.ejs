@@ -3,23 +3,27 @@
   const loginIsActive = currentPage === "login" || currentPage === "signup" || currentPage === "forget-password";
   const aboutStyle = currentPage === "about"
     ? "margin-right: 18px; font-size: 13.5px; text-decoration: none; color: var(--color-text-primary); font-weight: 600;"
-    : "margin-right: 18px; font-size: 13.5px; text-decoration: none;";
+    : "margin-right: 18px; font-size: 13.5px; text-decoration: none; color: #666;";
   const contactStyle = currentPage === "contact"
     ? "margin-right: 18px; font-size: 13.5px; text-decoration: none; color: var(--color-text-primary); font-weight: 600;"
-    : "margin-right: 18px; font-size: 13.5px; text-decoration: none;";
+    : "margin-right: 18px; font-size: 13.5px; text-decoration: none; color: #666;";
   const loginStyle = loginIsActive
-    ? "text-decoration: none; padding: 6px 20px;"
-    : "text-decoration: none; padding: 6px 20px; background: transparent; color: var(--color-text-primary); border: 1px solid var(--color-border);";
+    ? "text-decoration: none; padding: 6px 20px; font-size: 13.5px;"
+    : "text-decoration: none; padding: 6px 20px; background: transparent; color: var(--color-text-primary); border: 1px solid var(--color-border); font-size: 13.5px; border-radius: 6px;";
 %>
-<header class="topbar">
-  <div class="logo-link">
-    <a href="/" class="logo-text" style="text-decoration: none;">UpThrift</a>
-  </div>
 
-  <div class="topbar-actions">
-    <a href="/about" class="footer-link" style="<%= aboutStyle %>">About</a>
-    <a href="/contact" class="footer-link" style="<%= contactStyle %>">Contact</a>
+<header class="topbar" style="display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 80px; background: #fff; border-bottom: 1px solid #eee;">
+  
+  <a href="/" class="logo-link" style="display: flex; align-items: center; overflow: hidden; height: 100%;">
+     <img src="/images/Upthrift_logo2.png" alt="UpThrift" class="logo-img" style="height:130px; object-fit: contain;">
+  </a>
 
-    <a href="/login" class="btn-create-post" style="<%= loginStyle %>">Login</a>
+  <div class="topbar-actions" style="display: flex; align-items: center; gap: 5px;">
+    <a href="/about" style="<%= aboutStyle %>">About</a>
+    <a href="/contact" style="<%= contactStyle %>">Contact</a>
+
+    <a href="/login" class="btn-create-post" style="<%= loginStyle %> display: flex; align-items: center; justify-content: center; font-weight: 500;">
+        Login
+    </a>
   </div>
 </header>
