@@ -7,96 +7,215 @@
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        .signup-body {
-            background-color: #f2f2ee;
-            font-family: var(--font-body);
+        .split-body {
+            background-color: #f2f2ee; 
+            font-family: var(--font-body); 
+            margin: 0;
         }
+
+        .split-container {
+            display: flex; 
+            flex-wrap: wrap; 
+            min-height: calc(100vh - 80px); 
+            align-items: stretch;
+        }
+
+        .form-side {
+            flex: 1.2; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 60px 5%; 
+            min-width: 320px;
+        }
+
         .form-content {
-            padding: 40px 12%;
+            width: 100%; 
+            max-width: 480px;
         }
-        .signup-badge {
-            background: #e9e9e9;
-            padding: 6px 14px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: var(--color-text-secondary);
-            border-radius: 4px;
-            font-family: var(--font-body);
+
+        .image-side {
+            flex: 1; 
+            min-width: 320px; 
+            position: relative;
         }
+
+        .image-side img {
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            position: absolute; 
+            top: 0; 
+            left: 0;
+        }
+        
+        .page-badge {
+            background: #e9e9e9; 
+            padding: 8px 16px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            letter-spacing: 1.5px; 
+            color: #666; 
+            border-radius: 6px; 
+            text-transform: uppercase; 
+            display: inline-block; 
+            margin-bottom: 25px;
+        }
+
         .page-title {
-            font-family: var(--font-display);
-            font-size: 36px;
-            margin-top: 20px;
-            color: var(--color-text-primary);
+            font-family: var(--font-display); 
+            font-size: 48px; 
+            color: #222; 
+            margin: 0 0 15px 0; 
+            line-height: 1.1;
         }
-        .login-link-text {
-            margin-top: 20px;
-            font-size: 14px;
-            color: var(--color-text-secondary);
-            font-family: var(--font-body);
+
+        .subtitle {
+            font-family: var(--font-body); 
+            font-size: 18px; 
+            color: #666; 
+            margin-bottom: 40px; 
+            line-height: 1.6;
         }
-        .login-link-text a {
-            color: #4a6fa5;
-            text-decoration: none;
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block; 
+            font-family: var(--font-body); 
+            font-weight: 600; 
+            font-size: 15px; 
+            margin-bottom: 8px; 
+            color: #333;
+        }
+
+        .comment-input {
+            width: 100%; 
+            padding: 16px; 
+            font-family: var(--font-body); 
+            font-size: 16px; 
+            background-color: #ffffff;
+            border: 1px solid #000000; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            transition: all 0.3s;
+        }
+
+        .comment-input:focus {
+            outline: none; 
+            border-color: var(--color-accent); 
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-post {
+            width: 100%; 
+            padding: 16px; 
+            font-family: var(--font-body); 
+            font-size: 16px; 
+            font-weight: 600; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            transition: 0.3s;
+        }
+
+        .action-link {
+            color: #4a6fa5; 
+            text-decoration: none; 
             font-weight: 600;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        .bottom-text {
+            margin-top: 25px; 
+            font-size: 15px; 
+            color: #666;
+        }
+
+        .form-message {
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 25px; 
+            font-size: 15px;
+        }
+
+        .success-message {
+            background-color: #f6ffed; 
+            border: 1px solid #b7eb8f; 
+            color: #52c41a;
+        }
+
+        .error-message {
+            background-color: #fff1f0; 
+            border: 1px solid #ffa39e; 
+            color: #cf1322;
+        }
+        
+        @media (max-width: 900px) {
+            .split-container { flex-direction: column; }
+            .image-side { min-height: 350px; order: -1; }
+            .form-side { padding: 50px 25px; }
+            .page-title { font-size: 38px; }
         }
     </style>
 </head>
-<body class="signup-body">
+<body class="split-body">
 
     <%- include('components/topbar-guest') %>
 
-    <main class="split-container" style="min-height: 85vh;">
+    <main class="split-container">
         <section class="form-side">
             <div class="form-content">
-                <span class="signup-badge">SIGNUP</span>
-                
+                <span class="page-badge">SIGNUP</span>
                 <h1 class="page-title">Create Account</h1>
-                <p class="post-content" style="margin-bottom: 25px; font-family: var(--font-body);">Join the UPTHRIFT community</p>
+                <p class="subtitle">Join the UPTHRIFT community</p>
 
-                <% if (message) { %>
+                <% if (typeof message !== 'undefined' && message) { %>
                     <div class="form-message success-message"><%= message %></div>
                 <% } %>
 
-                <% if (error) { %>
+                <% if (typeof error !== 'undefined' && error) { %>
                     <div class="form-message error-message"><%= error %></div>
                 <% } %>
 
-                <form action="/auth/signup" method="POST" class="styled-form" style="max-width: 420px;">
+                <form action="/auth/signup" method="POST" class="styled-form">
                     <div class="form-group">
-                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Username</label>
+                        <label class="form-label">Username</label>
                         <input type="text" name="username" class="comment-input" placeholder="JaneDoe" required>
                     </div>
 
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Email</label>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
                         <input type="email" name="email" class="comment-input" placeholder="your@email.com" required>
                     </div>
 
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Password</label>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
                         <input type="password" name="password" class="comment-input" placeholder="........" required>
                     </div>
 
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label class="form-label" style="font-family: var(--font-body); font-weight: 500;">Confirm Password</label>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
                         <input type="password" name="confirmPassword" class="comment-input" placeholder="........" required>
                     </div>
 
-                    <button type="submit" class="btn-post" style="width: 100%; margin-top: 25px; padding: 14px; border: none; cursor: pointer;">
-                        Create Account
-                    </button>
+                    <button type="submit" class="btn-post">Create Account</button>
 
-                    <p class="login-link-text">
-                        Already have an account? <a href="/login">Sign in</a>
+                    <p class="bottom-text">
+                        Already have an account? <a href="/login" class="action-link">Sign in</a>
                     </p>
                 </form>
             </div>
         </section>
 
         <section class="image-side">
-            <img src="/images/signup.jpg" alt="Thrift Store Rack" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="/images/signup.jpg" alt="Thrift Store Rack">
         </section>
     </main>
 
