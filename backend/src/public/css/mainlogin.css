@@ -316,7 +316,7 @@ select { font-family: inherit; }
 
 .post-media-placeholder {
   width: 100%;
-  height: 200px;
+  height: 400px;
   background: #e5e7e2;
   border-radius: var(--radius-sm);
   display: flex;
@@ -328,7 +328,7 @@ select { font-family: inherit; }
 }
 
 .post-media-placeholder--large {
-  height: 280px;
+  height: 580px;
 }
 
 .post-actions {
