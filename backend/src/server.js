@@ -80,6 +80,12 @@ app.get('/notifications', (req, res) => {
     }); 
 });
 
+app.get('/legal', (req, res) => {
+    res.render('legal', { 
+        activePage: 'legal' 
+    }); 
+});
+
 app.get("/feed", postController.getFeedPage);
 app.get("/create-post", postController.getCreatePostPage);
 app.get("/post/:id", postController.getPostDetailsPage);
