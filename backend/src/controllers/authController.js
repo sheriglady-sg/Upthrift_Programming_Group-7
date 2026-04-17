@@ -116,6 +116,7 @@ async function login(req, res) {
         }
 
         req.session.user_id = user.user_id;
+        req.session.username = user.username;
 
         if (isHtmlRequest(req)) {
             return res.redirect("/create-post?message=Login%20successful");

@@ -134,12 +134,31 @@ async function getFeedPage(req, res) {
     }
 }
 
-function getCreatePostPage(req, res) {
+async function getCreatePostPage(req, res) {
+    const userId = req.session && req.session.user_id ? req.session.user_id : req.query.user_id || "";
+    let username = req.session && req.session.username ? req.session.username : "";
+
+    if (!username && userId) {
+        try {
+            const [users] = await pool.query(
+                "SELECT username FROM user WHERE user_id = ? LIMIT 1",
+                [userId]
+            );
+
+            if (users.length > 0) {
+                username = users[0].username;
+            }
+        } catch (error) {
+            console.error("Load username failed:", error);
+        }
+    }
+
     return res.render("create-post", {
         activePage: "feed",
         message: req.query.message || "",
         error: req.query.error || "",
-        userId: req.session && req.session.user_id ? req.session.user_id : req.query.user_id || ""
+        userId: userId,
+        username: username
     });
 }
 
