@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UpThrift – <%= convo.name %></title>
+  <title>UpThrift . <%= otherUserName %></title>
   <link rel="stylesheet" href="/css/mainlogin.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,83 +14,51 @@
   <%- include('components/topbar') %>
 
   <div class="navigation">
-    <%- include('components/sidebar', { activePage }) %>
+    <%- include('components/sidebar', { activePage: 'messages' }) %>
 
     <main class="main-content main-content--chatbox">
 
-      <!-- Chat header -->
       <div class="chat-header">
         <div class="chat-header-left">
           <a href="/messages" class="back-link chat-back">
-            <!-- REPLACE: back arrow icon -->
             <span class="back-arrow">←</span>
           </a>
           <div class="chat-header-info">
-            <% if (convo.userSlug) { %><a href="/user/<%= convo.userSlug %>" class="chat-name chat-name-link"><%= convo.name %></a><% } else { %><h2 class="chat-name"><%= convo.name %></h2><% } %>
-            <span class="chat-status">Active 5m ago</span>
+            <h2 class="chat-name"><%= otherUserName %></h2>
+            <span class="chat-status">Active now</span>
+            <p id="typingIndicator" class="typing-indicator" style="display: none;"></p>
           </div>
         </div>
         <button class="chat-more-btn" aria-label="More options">
-          <!-- REPLACE: three dots / kebab icon -->
           <span class="more-dots">⋮</span>
         </button>
       </div>
 
       <hr class="chat-divider" />
 
-      <!-- Messages area -->
-      <div class="chat-messages" id="chatMessages">
+      <div class="chat-messages" id="chatMessages"></div>
 
-        <!-- Date separator -->
-        <div class="date-separator">
-          <span class="date-label">Today</span>
-        </div>
-
-        <% convo.messages.forEach(msg => { %>
-          <% if (msg.from === 'them') { %>
-          <div class="bubble-row bubble-row--them">
-            <div class="bubble bubble--them">
-              <p class="bubble-text"><%= msg.text %></p>
-              <span class="bubble-time"><%= msg.time %></span>
-            </div>
-          </div>
-          <% } else { %>
-          <div class="bubble-row bubble-row--me">
-            <div class="bubble bubble--me">
-              <p class="bubble-text"><%= msg.text %></p>
-              <span class="bubble-time bubble-time--me"><%= msg.time %></span>
-            </div>
-          </div>
-          <% } %>
-        <% }) %>
-
-      </div>
-
-      <!-- Input area -->
       <div class="chat-input-area">
-        <div class="chat-input-row">
+        <div class="chat-input-row"> 
           <div class="chat-input-actions">
-            <!-- REPLACE: paperclip icon -->
-            <button class="chat-action-btn" aria-label="Attach file">
-              <img src="/images/Paperclip.png" alt="Attach file" style="height: 18px;">
-            </button>
-            <!-- REPLACE: image icon -->
-            <button class="chat-action-btn" aria-label="Send image">
-              <img src="/images/Image_01.svg" alt="Send image" style="height: 18px;">
-            </button>
-          </div>
+         <input type="file" id="imageInput" accept="image/*" style="display: none;">
+          <button class="chat-action-btn" aria-label="Send image" type="button" id="imagePickerBtn">
+          <img src="/images/Image_01.svg" alt="Send image" style="height: 18px;">
+  </button>
+</div>
+
           <input
             type="text"
             class="chat-input"
             id="chatInput"
             placeholder="Type your message..."
           />
-          <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message">
-            <!-- REPLACE: send/paper-plane icon -->
+
+          <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message" type="button">
             <span class="send-icon">➤</span>
           </button>
         </div>
-        <p class="chat-input-hint">Press Enter to send, Shift+Enter for new line</p>
+        <p class="chat-input-hint">Press Enter to send message</p>
       </div>
 
     </main>
@@ -98,43 +66,261 @@
 
   <%- include('components/footerlogin') %>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    // Scroll to bottom on load
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    const socket = io();
+    const conversationId = "<%= conversationId %>";
+    const userId = "<%= userId %>";
 
-    // Send message on Enter
-    const input = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('chatSendBtn');
+    const chatMessages = document.getElementById("chatMessages");
+    const input = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("chatSendBtn");
+    const imageInput = document.getElementById("imageInput");
+    const imagePickerBtn = document.getElementById("imagePickerBtn");
+    const typingIndicator = document.getElementById("typingIndicator");
+    const currentUserName = "<%= currentUserName %>";
 
-    function sendMessage() {
+
+    let lastDateLabel = null;
+    let typingTimeout;
+    let isTyping = false;
+
+    //Join socket room//
+    socket.emit("join_conversation", conversationId);
+
+   //Typing
+   
+   function handleTyping() {
+  if (!isTyping) {
+    isTyping = true;
+    socket.emit("typing", {
+      conversationId,
+      userName: currentUserName
+    });
+  }
+
+  clearTimeout(typingTimeout);
+
+  typingTimeout = setTimeout(() => {
+    isTyping = false;
+    socket.emit("stop_typing", { conversationId });
+  }, 1200);
+}
+
+  //Format date label - today, yesterday or full date
+  function formatDateLabel(dateString) {
+  const msgDate = new Date(dateString);
+  const today = new Date();
+
+  const msgOnly = new Date(msgDate.getFullYear(), msgDate.getMonth(), msgDate.getDate());
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  const diffDays = (todayOnly - msgOnly) / (1000 * 60 * 60 * 24);
+
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+
+  return msgDate.toLocaleDateString("en-IE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+    //Date Separator
+    function appendDateSeparator(label) {
+      const separator = document.createElement("div");
+      separator.className = "date-separator";
+      separator.innerHTML = `<span class="date-label">${label}</span>`;
+      chatMessages.appendChild(separator);
+    }
+
+    //Append a single message
+    function appendMessage(msg) {
+  const row = document.createElement("div");
+  const isMine = String(msg.sender_user_id) === String(userId);
+
+  row.className = isMine
+    ? "bubble-row bubble-row--me"
+    : "bubble-row bubble-row--them";
+
+  const time = new Date(msg.sent_at).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  let contentHtml = "";
+
+  // ✅ Show image if exists
+  if (msg.media_url) {
+    contentHtml += `
+      <img 
+        src="${msg.media_url}" 
+        alt="Chat image" 
+        style="max-width: 220px; border-radius: 12px; display: block; margin-bottom: 6px;"
+      >
+    `;
+  }
+
+  // ✅ Show text ONLY if it's not "//image"
+  if (msg.message_text && msg.message_text !== "//image") {
+    contentHtml += `<p class="bubble-text">${msg.message_text}</p>`;
+  }
+
+  row.innerHTML = isMine
+    ? `
+      <div class="bubble bubble--me">
+        ${contentHtml}
+        <span class="bubble-time bubble-time--me">${time}</span>
+      </div>
+    `
+    : `
+      <div class="bubble bubble--them">
+        ${contentHtml}
+        <span class="bubble-time">${time}</span>
+      </div>
+    `;
+
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+    //Append message with the date separator
+    function appendMessageWithDate(msg) {
+    const currentDateLabel = formatDateLabel(msg.sent_at);
+
+    if (currentDateLabel !== lastDateLabel) {
+      appendDateSeparator(currentDateLabel);
+      lastDateLabel = currentDateLabel;
+    }
+
+    appendMessage(msg);
+  }
+
+  //Load previous messages
+    async function loadMessages() {
+      try {
+        const response = await fetch(`/messages/conversation/${conversationId}`);
+        const messages = await response.json();
+
+        console.log("Loaded messages:", messages);
+
+        chatMessages.innerHTML = "";
+        lastDateLabel = null;
+
+        messages.forEach((msg) => {
+        appendMessageWithDate(msg);
+      });
+    } catch (error) {
+      console.error("Failed to load messages:", error);
+    }
+  }
+
+//Send a new message
+
+    async function sendMessage() {
       const text = input.value.trim();
       if (!text) return;
 
-      const row = document.createElement('div');
-      row.className = 'bubble-row bubble-row--me';
+      try {
+        const response = await fetch("/messages/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            conversation_id: conversationId,
+            message_text: text
+          })
+        });
 
-      const now = new Date();
-      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const result = await response.json();
 
-      row.innerHTML = `
-        <div class="bubble bubble--me">
-          <p class="bubble-text">${text}</p>
-          <span class="bubble-time bubble-time--me">${time}</span>
-        </div>`;
+        if (!response.ok) {
+          alert(result.message || "Failed to send message");
+          return;
+        }
 
-      chatMessages.appendChild(row);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      input.value = '';
+        input.value = "";
+        socket.emit("stop_typing", { conversationId });
+        isTyping = false;
+        clearTimeout(typingTimeout);
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
     }
 
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+    //Recieve real time messages
+    socket.on("new_message", (msg) => {
+      if (String(msg.conversation_id) === String(conversationId)) {
+        appendMessageWithDate(msg);
+      }
+    });
+
+    socket.on("user_typing", ({ userName }) => {
+  typingIndicator.style.display = "block";
+  typingIndicator.textContent = `${userName} is typing...`;
+});
+
+socket.on("user_stop_typing", () => {
+  typingIndicator.style.display = "none";
+  typingIndicator.textContent = "";
+});
+
+    //Event Listeners
+    input.addEventListener("input", () => {
+  if (input.value.trim()) {
+    handleTyping();
+  } else {
+    socket.emit("stop_typing", { conversationId });
+    isTyping = false;
+    clearTimeout(typingTimeout);
+  }
+});
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
       }
     });
-    sendBtn.addEventListener('click', sendMessage);
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    //Add image
+    imagePickerBtn.addEventListener("click", () => {
+  imageInput.click();
+});
+
+imageInput.addEventListener("change", async () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("conversation_id", conversationId);
+  formData.append("image", file);
+
+  try {
+    const response = await fetch("/messages/send-image", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.message || "Failed to send image");
+      return;
+    }
+
+    imageInput.value = "";
+  } catch (error) {
+    console.error("Failed to upload image:", error);
+  }
+});
+
+    //Load chat history on page
+    loadMessages();
   </script>
 
 </body>
