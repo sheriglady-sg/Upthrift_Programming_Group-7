@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal & Privacy | UpThrift</title>
+    <link rel="stylesheet" href="/css/mainlogin.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        
+        .legal-page-body {
+            background-color: #f4f5f0;
+            font-family: var(--font-body);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .legal-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        
+        .legal-content-block {
+            background: #ffffff;
+            padding: 60px 80px;
+            max-width: 900px;
+            width: 100%;
+            border: 1px solid #e0e0e0; 
+            border-radius: 4px;
+        }
+
+        .legal-title {
+            font-family: var(--font-display);
+            font-size: 36px;
+            color: var(--color-accent);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .legal-date {
+            text-align: center;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 50px;
+        }
+
+        .legal-heading {
+            font-family: var(--font-display);
+            font-size: 24px;
+            color: var(--color-text-primary);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .legal-text {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        /*for mobile*/
+        @media (max-width: 768px) {
+            .legal-content-block {
+                padding: 40px 25px;
+            }
+            .legal-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body class="legal-page-body">
+
+    <%- include('components/topbar-guest') %>
+
+    <main class="legal-container">
+        <article class="legal-content-block">
+            <h1 class="legal-title">Legal & Privacy</h1>
+            <p class="legal-date">Last Updated: April 2026</p>
+            
+            <h2 class="legal-heading">1. Terms of Service</h2>
+            <p class="legal-text">
+                Welcome to UPTHRIFT! By accessing our platform, you agree to these friendly terms. UPTHRIFT is a community-driven space built for sustainable fashion lovers, thrifters, and DIY creators. We ask that you treat all members with respect, refrain from posting inappropriate or illegal content, and keep the community vibes positive.
+            </p>
+            <p class="legal-text">
+                We reserve the right to suspend accounts that violate our community guidelines. The amazing upcycled creations and vintage finds you post belong to you, but by sharing them here, you grant us permission to display them across the UPTHRIFT platform to inspire others.
+            </p>
+
+            <h2 class="legal-heading">2. Privacy Policy</h2>
+            <p class="legal-text">
+                We value your privacy as much as a hidden gem at a local thrift store. We collect basic account information (such as your username and email address) solely to keep your account secure and provide you with a personalized thrifting experience.
+            </p>
+            <p class="legal-text">
+                <strong>We do not sell your personal data to third-party advertisers.</strong> Any cookies we use are strictly for essential functions, like keeping you logged in. If you ever wish to delete your account and all associated data, simply reach out to us at <strong>hello@upthrift.ie</strong>.
+            </p>
+
+            <h2 class="legal-heading">3. Liability & Disclaimers</h2>
+            <p class="legal-text">
+                UPTHRIFT is provided on an "as-is" basis. While we strive to keep our platform bug-free, safe, and running smoothly, we cannot guarantee it will always be perfect. Furthermore, UPTHRIFT acts only as a community connector; we are not responsible for any transactions, trades, or disputes that may occur off-platform between users.
+            </p>
+        </article>
+    </main>
+
+    <%- include('components/footer') %>
+
+</body>
+</html>
