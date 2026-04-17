@@ -164,16 +164,20 @@ exports.sendMessage = async (req, res) => {
 
         const [messageRows] = await pool.query(
             `SELECT
-                message_id,
-                conversation_id,
-                sender_user_id,
-                message_text,
-                sent_at,
-                is_read
-             FROM message
-             WHERE message_id = ?`,
-            [result.insertId]
-        );
+        m.message_id,
+        m.conversation_id,
+        m.sender_user_id,
+        m.message_text,
+        m.sent_at,
+        m.is_read,
+        mm.media_url,
+        mm.media_type
+     FROM message m
+     LEFT JOIN message_media mm
+        ON m.message_id = mm.message_id
+     WHERE m.message_id = ?`,
+    [result.insertId]
+);
 
         const newMessage = messageRows[0];
 
@@ -253,33 +257,36 @@ exports.renderMessagesPage = async (req, res) => {
     }
 
     try {
-        const [rows] = await pool.query(
-            `SELECT
-            c.conversation_id AS id,
-            u.username AS name,
-            u.profile_pic_url AS avatar,
-            m.message_text AS lastMessage,
-            m.sent_at AS lastMessageTime
-            FROM conversation_participant cp
-            JOIN conversation c
-            ON cp.conversation_id = c.conversation_id
-            JOIN conversation_participant cp2
-            ON cp.conversation_id = cp2.conversation_id
-            AND cp2.user_id != cp.user_id
-             JOIN user u
-                ON cp2.user_id = u.user_id
-             LEFT JOIN message m
-                ON m.message_id = (
-                    SELECT message_id
-                    FROM message
-                    WHERE conversation_id = c.conversation_id
-                    ORDER BY sent_at DESC
-                    LIMIT 1
-                )
-             WHERE cp.user_id = ?
-             ORDER BY m.sent_at DESC`,
-             [currentUserId]
-        );
+       const [rows] = await pool.query(
+    `SELECT
+        c.conversation_id AS id,
+        u.username AS name,
+        u.profile_pic_url AS avatar,
+        m.message_text AS lastMessage,
+        m.sent_at AS lastMessageTime,
+        mm.media_url
+     FROM conversation_participant cp
+     JOIN conversation c
+        ON cp.conversation_id = c.conversation_id
+     JOIN conversation_participant cp2
+        ON cp.conversation_id = cp2.conversation_id
+       AND cp2.user_id != cp.user_id
+     JOIN user u
+        ON cp2.user_id = u.user_id
+     LEFT JOIN message m
+        ON m.message_id = (
+            SELECT message_id
+            FROM message
+            WHERE conversation_id = c.conversation_id
+            ORDER BY sent_at DESC
+            LIMIT 1
+        )
+     LEFT JOIN message_media mm
+        ON m.message_id = mm.message_id
+     WHERE cp.user_id = ?
+     ORDER BY m.sent_at DESC`,
+    [currentUserId]
+);
 
          const conversations = rows.map((row) => ({
             id: row.id,
@@ -357,7 +364,7 @@ exports.sendImageMessage = async (req, res) => {
         const [messageResult] = await pool.query(
             `INSERT INTO message (conversation_id, sender_user_id, message_text)
              VALUES (?, ?, ?)`,
-            [conversation_id, senderUserId, null]
+            [conversation_id, senderUserId, ""]
         );
 
         const messageId = messageResult.insertId;
