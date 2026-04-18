@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UpThrift – Home/Feed</title>
+  <link rel="stylesheet" href="/css/mainlogin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <%- include('components/topbar') %>
+
+  <div class="navigation">
+    <%- include('components/sidebar', { activePage }) %>
+
+    <main class="split-container">
+        <section class="form-side">
+            <div class="form-content">
+                <span class="page-badge">LOGIN</span>
+                
+                <h1 class="page-title">Welcome Back</h1>
+                <p class="subtitle">Sign in to your account</p>
+
+                <% if (typeof message !== 'undefined' && message) { %>
+                    <div class="form-message success-message"><%= message %></div>
+                <% } %>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="form-message error-message"><%= error %></div>
+                <% } %>
+
+                <form action="/auth/login" method="POST" class="styled-form">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="comment-input" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="comment-input" placeholder="........" required>
+                    </div>
+
+                    <a href="/forget-password" class="forget-password">Forgot Password?</a>
+
+                    <button type="submit" class="btn-post">Sign In</button>
+
+                    <p class="bottom-text">
+                        Don't have an account? <a href="/signup" class="action-link">Sign up</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+
+        <section class="image-side">
+            <img src="/images/login.jpg" alt="Woman with vintage clothes">
+        </section>
+    </main>
+
+  <%- include('components/footerlogin') %>
+
+</body>
+</html>
