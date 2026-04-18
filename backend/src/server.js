@@ -10,6 +10,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const pool = require("./config/db");
 const postController = require("./controllers/postController");
 const storeController = require("./controllers/storeController");
+const eventController = require("./controllers/eventController");
 
 const app = express();
 const server = http.createServer(app);
@@ -155,6 +156,9 @@ app.get('/legal', (req, res) => {
 app.get("/feed", postController.getFeedPage);
 app.get("/create-post", postController.getCreatePostPage);
 app.get("/post/:id", postController.getPostDetailsPage);
+app.get("/events", eventController.getEventsPage);
+app.get("/events/:slug", eventController.getEventDetailsPage);
+app.post("/events/:slug/rsvp", eventController.postRsvp);
 app.get("/discover", storeController.getDiscoverPage);
 app.get("/store/:slug", storeController.getStorePage);
 app.get("/store/:slug/review", storeController.getWriteReviewPage);

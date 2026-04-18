@@ -21,6 +21,10 @@
         <span class="breadcrumb-tag">EVENTS PAGE</span>
       </div>
 
+      <% if (typeof message !== 'undefined' && message) { %>
+        <div class="form-message success-message" style="margin-bottom:20px;"><%= message %></div>
+      <% } %>
+
       <!-- Cover image -->
       <div class="event-detail-card">
         <% if (event.cover) { %>
@@ -63,7 +67,13 @@
                 <img src="/images/Users.png" alt="Attendees" style="height: 18px;">
                 <div>
                   <p class="event-field-label">Attendees</p>
-                  <p class="event-field-value"><%= event.attendees %> people attending</p>
+                  <p class="event-field-value">
+                    <% if (event.attendees > 0) { %>
+                      <%= event.attendees %> people attending
+                    <% } else { %>
+                      No RSVPs yet
+                    <% } %>
+                  </p>
                 </div>
               </div>
             </div>
@@ -78,12 +88,9 @@
             <form action="/events/<%= event.slug %>/rsvp" method="POST" style="flex:1;">
               <button type="submit" class="btn-rsvp-detail">RSVP to Event</button>
             </form>
-            <button class="btn-reminder">
-              <img src="/images/Bell.svg" alt="Set Reminder" style="height: 18px;"> Set Reminder
-            </button>
-            <button class="btn-directions">
+            <a href="<%= event.directionsUrl %>" class="btn-directions" target="_blank">
               <img src="/images/Map_Pin_01.svg" alt="Directions" style="height: 18px;"> Directions
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -91,12 +98,18 @@
       <!-- Attendees card -->
       <div class="attendees-card">
         <h3 class="attendees-title">Attendees</h3>
-        <div class="attendees-row">
-          <% for(let i = 0; i < event.attendeeAvatars; i++) { %>
-          <div class="attendee-bubble"></div>
-          <% } %>
-          <div class="attendee-bubble attendee-bubble--count">+<%= event.attendeeExtra %></div>
-        </div>
+        <% if (event.attendees > 0) { %>
+          <div class="attendees-row">
+            <% for(let i = 0; i < event.attendeeAvatars; i++) { %>
+            <div class="attendee-bubble"></div>
+            <% } %>
+            <% if (event.attendeeExtra > 0) { %>
+              <div class="attendee-bubble attendee-bubble--count">+<%= event.attendeeExtra %></div>
+            <% } %>
+          </div>
+        <% } else { %>
+          <p class="review-text">No one has RSVP'd yet. Be the first one to join.</p>
+        <% } %>
       </div>
 
     </main>
