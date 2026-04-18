@@ -1,4 +1,7 @@
 const pool = require("../config/db");
+const storesData = require("../data/storesData");
+
+let storesLoaded = false;
 
 function makeSlug(text) {
     return String(text || "")
@@ -7,6 +10,10 @@ function makeSlug(text) {
         .replace(/[^a-z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-");
+}
+
+function makeStoreSlug(store) {
+    return `${makeSlug(store.name)}-${store.store_id}`;
 }
 
 function formatTypeName(typeName) {
@@ -54,22 +61,117 @@ function getStoreImage(storeId) {
     return images[(storeId - 1) % images.length];
 }
 
+function getStoreTypeId(typeName) {
+    if (typeName === "charity_shop") {
+        return 1;
+    }
+
+    if (typeName === "vintage_store") {
+        return 2;
+    }
+
+    if (typeName === "fleamarket") {
+        return 3;
+    }
+
+    if (typeName === "consignment") {
+        return 4;
+    }
+
+    return 1;
+}
+
 function buildStoreDescription(store) {
-    const typeName = formatTypeName(store.type_name);
+    const typeName = formatTypeName(store.store_type || store.type_name);
+    const hours = store.opening_hours ? `Hours: ${store.opening_hours}.` : "";
     const priceLevel = store.price_level ? `Price level: ${store.price_level}.` : "";
-    return `A ${typeName} in ${store.address}. ${priceLevel}`.trim();
+    return `A ${typeName} in ${store.address}. ${hours} ${priceLevel}`.trim();
+}
+
+function getShortLocation(address) {
+    const parts = String(address || "").split(",");
+
+    if (parts.length >= 2) {
+        return `${parts[0].trim()}, ${parts[1].trim()}`;
+    }
+
+    return String(address || "See address");
+}
+
+function combineRating(baseRating, baseCount, localRatingTotal, localCount) {
+    const totalCount = baseCount + localCount;
+
+    if (totalCount === 0) {
+        return 0;
+    }
+
+    return (baseRating * baseCount + localRatingTotal) / totalCount;
+}
+
+function findSeedStoreById(storeId) {
+    return storesData.find((store) => store.store_id === Number(storeId)) || null;
+}
+
+async function ensureStoresInDatabase() {
+    if (storesLoaded) {
+        return;
+    }
+
+    for (const store of storesData) {
+        await pool.query(
+            `INSERT INTO thrift_store
+                (store_id, name, address, latitude, longitude, google_maps_url, phone_number, website_url, price_level, user_submitted, submitted_by_user_id, verification_status, store_type_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+                name = VALUES(name),
+                address = VALUES(address),
+                latitude = VALUES(latitude),
+                longitude = VALUES(longitude),
+                google_maps_url = VALUES(google_maps_url),
+                phone_number = VALUES(phone_number),
+                website_url = VALUES(website_url),
+                price_level = VALUES(price_level),
+                verification_status = VALUES(verification_status),
+                store_type_id = VALUES(store_type_id)`,
+            [
+                store.store_id,
+                store.name,
+                store.address,
+                store.latitude,
+                store.longitude,
+                store.google_maps_url,
+                store.phone_number,
+                store.website_url,
+                store.price_level,
+                0,
+                null,
+                "verified",
+                getStoreTypeId(store.store_type)
+            ]
+        );
+    }
+
+    storesLoaded = true;
 }
 
 function mapStoreCard(store) {
+    const baseStore = findSeedStoreById(store.store_id) || store;
+    const baseCount = Number(baseStore.review_amount || 0);
+    const baseRating = Number(baseStore.rating_avg || 0);
+    const localCount = Number(store.local_review_count || 0);
+    const localRatingTotal = Number(store.local_rating_total || 0);
+    const finalCount = baseCount + localCount;
+    const finalRating = combineRating(baseRating, baseCount, localRatingTotal, localCount);
+
     return {
         id: store.store_id,
-        slug: makeSlug(store.name),
-        name: store.name,
+        slug: makeStoreSlug(baseStore),
+        name: baseStore.name,
         image: getStoreImage(store.store_id),
-        rating: Number(store.rating || 0).toFixed(1),
-        reviewCount: store.review_count || 0,
-        distance: "See address",
-        description: buildStoreDescription(store)
+        rating: finalRating.toFixed(1),
+        reviewCount: finalCount,
+        distance: getShortLocation(baseStore.address),
+        description: buildStoreDescription(baseStore)
     };
 }
 
@@ -88,6 +190,8 @@ function mapReview(review) {
 async function loadStoreRows(searchText) {
     const query = searchText ? `%${searchText}%` : "%";
 
+    await ensureStoresInDatabase();
+
     const [rows] = await pool.query(
         `SELECT
             s.store_id,
@@ -98,8 +202,8 @@ async function loadStoreRows(searchText) {
             s.website_url,
             s.price_level,
             st.type_name,
-            COALESCE(AVG(r.rating), 0) AS rating,
-            COUNT(r.review_id) AS review_count
+            COALESCE(SUM(r.rating), 0) AS local_rating_total,
+            COUNT(r.review_id) AS local_review_count
          FROM thrift_store s
          LEFT JOIN store_type st ON st.store_type_id = s.store_type_id
          LEFT JOIN store_review r ON r.store_id = s.store_id
@@ -123,8 +227,7 @@ async function loadStoreRows(searchText) {
 
 async function findStoreBySlug(slug) {
     const rows = await loadStoreRows("");
-
-    const store = rows.find((item) => makeSlug(item.name) === slug);
+    const store = rows.find((item) => makeStoreSlug(item) === slug);
 
     if (!store) {
         return null;
@@ -173,17 +276,25 @@ async function getStorePage(req, res) {
             [storeRow.store_id]
         );
 
+        const baseStore = findSeedStoreById(storeRow.store_id);
+        const baseCount = Number(baseStore ? baseStore.review_amount : 0);
+        const baseRating = Number(baseStore ? baseStore.rating_avg : 0);
+        const localCount = reviewRows.length;
+        const localRatingTotal = reviewRows.reduce((sum, review) => sum + Number(review.rating || 0), 0);
+        const finalCount = baseCount + localCount;
+        const finalRating = combineRating(baseRating, baseCount, localRatingTotal, localCount);
+
         return res.render("store", {
             activePage: "discover",
             message: req.query.message || "",
             store: {
                 id: storeRow.store_id,
-                slug: makeSlug(storeRow.name),
+                slug: makeStoreSlug(storeRow),
                 name: storeRow.name,
-                rating: Number(storeRow.rating || 0).toFixed(1),
-                reviewCount: storeRow.review_count || 0,
+                rating: finalRating.toFixed(1),
+                reviewCount: finalCount,
                 address: storeRow.address,
-                hours: "Please check the store website for opening hours.",
+                hours: baseStore && baseStore.opening_hours ? baseStore.opening_hours : "Please check the store website for opening hours.",
                 contact: storeRow.phone_number || "Not provided",
                 website: storeRow.website_url || "",
                 mapsUrl: storeRow.google_maps_url || "",
@@ -211,14 +322,22 @@ async function getWriteReviewPage(req, res) {
             return res.status(404).send("Store not found");
         }
 
+        const baseStore = findSeedStoreById(storeRow.store_id);
+        const baseCount = Number(baseStore ? baseStore.review_amount : 0);
+        const baseRating = Number(baseStore ? baseStore.rating_avg : 0);
+        const localCount = Number(storeRow.local_review_count || 0);
+        const localRatingTotal = Number(storeRow.local_rating_total || 0);
+        const finalCount = baseCount + localCount;
+        const finalRating = combineRating(baseRating, baseCount, localRatingTotal, localCount);
+
         return res.render("write-review", {
             activePage: "discover",
             error: req.query.error || "",
             store: {
-                slug: makeSlug(storeRow.name),
+                slug: makeStoreSlug(storeRow),
                 name: storeRow.name,
-                rating: Number(storeRow.rating || 0).toFixed(1),
-                reviewCount: storeRow.review_count || 0
+                rating: finalRating.toFixed(1),
+                reviewCount: finalCount
             }
         });
     } catch (error) {
