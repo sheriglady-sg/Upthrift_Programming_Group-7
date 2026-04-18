@@ -21,6 +21,10 @@
         <span class="breadcrumb-tag">STORE PAGE: DETAILS + REVIEWS</span>
       </div>
 
+      <% if (typeof message !== 'undefined' && message) { %>
+        <div class="form-message success-message" style="margin-bottom:20px;"><%= message %></div>
+      <% } %>
+
       <!-- Store detail card -->
       <div class="store-detail-card">
 
@@ -66,14 +70,12 @@
           </div>
 
           <div class="store-action-btns">
-            <button class="btn-get-directions">
-              <!-- REPLACE: pin icon -->
+            <a href="<%= store.mapsUrl || '#' %>" class="btn-get-directions" <%= store.mapsUrl ? 'target="_blank"' : '' %>>
               <img src="/images/Map_Pin.svg" alt="Get Directions" style="height: 18px;">Get Directions
-            </button>
-            <button class="btn-website">
-              <!-- REPLACE: external link icon -->
+            </a>
+            <a href="<%= store.website || '#' %>" class="btn-website" <%= store.website ? 'target="_blank"' : '' %>>
               <img src="/images/Navigation.svg" alt="Website" style="height: 18px;">Website
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -83,24 +85,32 @@
         <h2 class="store-reviews-title">Reviews</h2>
 
         <div class="store-reviews-list">
-          <% store.reviews.forEach(review => { %>
-          <div class="store-review-card">
-            <div class="store-review-header">
-              <div class="review-avatar"><%= review.initials %></div>
+          <% if (store.reviews.length === 0) { %>
+            <div class="store-review-card">
               <div class="review-meta">
-                <div class="review-top-row">
-                  <span class="review-author"><%= review.author %></span>
-                  <div class="review-stars">
-                    <% for(let i = 1; i <= 5; i++) { %>
-                      <span class="review-star <%= i <= review.rating ? 'review-star--filled' : '' %>">★</span>
-                    <% } %>
-                  </div>
-                  <span class="review-time"><%= review.timeAgo %></span>
-                </div>
-                <p class="review-text"><%= review.text %></p>
+                <p class="review-text">No reviews yet. Be the first one to write a review.</p>
               </div>
             </div>
-          </div>
+          <% } %>
+
+          <% store.reviews.forEach(review => { %>
+            <div class="store-review-card">
+              <div class="store-review-header">
+                <div class="review-avatar"><%= review.initials %></div>
+                <div class="review-meta">
+                  <div class="review-top-row">
+                    <span class="review-author"><%= review.author %></span>
+                    <div class="review-stars">
+                      <% for(let i = 1; i <= 5; i++) { %>
+                        <span class="review-star <%= i <= review.rating ? 'review-star--filled' : '' %>">★</span>
+                      <% } %>
+                    </div>
+                    <span class="review-time"><%= review.timeAgo %></span>
+                  </div>
+                  <p class="review-text"><%= review.text %></p>
+                </div>
+              </div>
+            </div>
           <% }) %>
         </div>
 

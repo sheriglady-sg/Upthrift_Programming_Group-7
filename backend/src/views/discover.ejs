@@ -61,7 +61,11 @@
         </div>
         <% }) %>
         <% if (stores.length === 0) { %>
-        <div class="discover-empty">No stores found for "<%= query %>".</div>
+          <% if (query) { %>
+            <div class="discover-empty">No stores found for "<%= query %>".</div>
+          <% } else { %>
+            <div class="discover-empty">No stores available yet.</div>
+          <% } %>
         <% } %>
       </div>
 

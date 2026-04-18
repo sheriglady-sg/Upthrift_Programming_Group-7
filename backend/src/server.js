@@ -9,6 +9,7 @@ const postRoutes = require("./routes/postRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const pool = require("./config/db");
 const postController = require("./controllers/postController");
+const storeController = require("./controllers/storeController");
 
 const app = express();
 const server = http.createServer(app);
@@ -155,6 +156,10 @@ app.get('/legal', (req, res) => {
 app.get("/feed", postController.getFeedPage);
 app.get("/create-post", postController.getCreatePostPage);
 app.get("/post/:id", postController.getPostDetailsPage);
+app.get("/discover", storeController.getDiscoverPage);
+app.get("/store/:slug", storeController.getStorePage);
+app.get("/store/:slug/review", storeController.getWriteReviewPage);
+app.post("/store/:slug/review", storeController.postReview);
 
 app.get("/chat/:conversationId", async (req, res) => {
     if (!req.session.user_id) {
