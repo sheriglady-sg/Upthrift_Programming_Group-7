@@ -199,7 +199,7 @@ exports.sendMessage = async (req, res) => {
 };
 
 exports.startConversationAndRedirect = async (req, res) => {
-    const { other_user_id } = req.body;
+    const { other_user_id, message_text } = req.body;
     const currentUserId = req.session.user_id;
 
     if (!currentUserId) {
@@ -208,6 +208,10 @@ exports.startConversationAndRedirect = async (req, res) => {
 
     if (!other_user_id) {
         return res.status(400).send("other_user_id is required");
+    }
+
+    if (!message_text || !message_text.trim()) {
+        return res.status(400).send("Message cannot be empty");
     }
 
     if (Number(currentUserId) === Number(other_user_id)) {
@@ -225,26 +229,75 @@ exports.startConversationAndRedirect = async (req, res) => {
             [currentUserId, other_user_id]
         );
 
+        let conversationId;
+
         if (existingRows.length > 0) {
-            return res.redirect(`/chat/${existingRows[0].conversation_id}`);
+            conversationId = existingRows[0].conversation_id;
+        } else {
+            const [conversationResult] = await pool.query(
+                "INSERT INTO conversation () VALUES ()"
+            );
+
+            conversationId = conversationResult.insertId;
+
+            await pool.query(
+                `INSERT INTO conversation_participant (conversation_id, user_id)
+                 VALUES (?, ?), (?, ?)`,
+                [conversationId, currentUserId, conversationId, other_user_id]
+            );
         }
 
-        const [conversationResult] = await pool.query(
-            "INSERT INTO conversation () VALUES ()"
+        await pool.query(
+            `INSERT INTO message (conversation_id, sender_user_id, message_text)
+             VALUES (?, ?, ?)`,
+            [conversationId, currentUserId, message_text.trim()]
         );
 
-        const conversationId = conversationResult.insertId;
-
         await pool.query(
-            `INSERT INTO conversation_participant (conversation_id, user_id)
-             VALUES (?, ?), (?, ?)`,
-            [conversationId, currentUserId, conversationId, other_user_id]
+            `UPDATE conversation
+             SET last_updated_at = CURRENT_TIMESTAMP
+             WHERE conversation_id = ?`,
+            [conversationId]
         );
 
         return res.redirect(`/chat/${conversationId}`);
     } catch (error) {
         console.error("startConversationAndRedirect error:", error);
         return res.status(500).send("Failed to start conversation");
+    }
+};
+
+//Render new message page
+exports.renderNewMessagePage = async (req, res) => {
+    const currentUserId = req.session.user_id;
+
+    if(!currentUserId) {
+        return res.redirect("/login?error=Please%20log%20in");
+    }
+    try {
+        const [rows] = await pool.query(
+            `SELECT user_id, username
+             FROM user
+             WHERE user_id != ?
+             ORDER BY username ASC`,
+            [currentUserId]
+        );
+
+        const suggestedUsers = rows.map((user) => ({
+            user_id: user.user_id,
+            name: user.username,
+            username: `@${user.username}`,
+            initials: user.username ? user.username.charAt(0).toUpperCase() : "?",
+            status: "Active community member"
+        }));
+
+        return res.render("new-message", {
+            activePage: "messages",
+            suggestedUsers
+        });
+    } catch (error) {
+        console.error("renderNewMessagePage error:", error);
+        return res.status(500).send("Failed to load new message page");
     }
 };
 
@@ -330,7 +383,7 @@ function formatTimeAgo(dateValue) {
     return `${days} days ago`;
 }
 
-//Send image message
+// Send image message
 exports.sendImageMessage = async (req, res) => {
     const { conversation_id } = req.body;
     const senderUserId = req.session.user_id;

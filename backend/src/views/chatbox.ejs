@@ -317,7 +317,14 @@ imageInput.addEventListener("change", async () => {
 });
 
     //Load chat history on page
+    document.addEventListener("DOMContentLoaded", () => {
+   loadMessages();
+});
+window.addEventListener("load", () => {
+  setTimeout(() => {
     loadMessages();
+  }, 150);
+});
   </script>
 
 </body>

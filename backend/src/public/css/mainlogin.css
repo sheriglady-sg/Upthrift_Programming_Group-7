@@ -2055,3 +2055,31 @@ select { font-family: inherit; }
     height: 38px;
     font-size: 11px;
 }
+
+/*New Message click*/
+.suggested-item {
+  cursor: pointer;
+}
+
+.suggested-item:hover {
+  background-color: #f7f7f2;
+}
+
+/*Hover on chat*/
+.suggested-item {
+  cursor: pointer;
+}
+
+.suggested-item:hover {
+  background-color: #f7f7f2;
+}
+
+.suggested-item--selected {
+  background-color: #f3efe4;
+  border: 1px solid #d8cdb2;
+}
+
+.btn-nm-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

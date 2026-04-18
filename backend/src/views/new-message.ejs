@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UpThrift – New Message</title>
+  <title>UpThrift . New Message</title>
   <link rel="stylesheet" href="/css/mainlogin.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,10 +18,8 @@
 
     <main class="main-content main-content--new-msg">
 
-      <!-- Page header -->
       <div class="new-msg-header">
         <a href="/messages" class="back-link">
-          <!-- REPLACE: back arrow icon -->
           <span class="back-arrow">←</span>
         </a>
         <div>
@@ -30,21 +28,18 @@
         </div>
       </div>
 
-      <!-- Compose form -->
       <div class="new-msg-form-card">
         <form action="/messages/start" method="POST" class="new-msg-form">
           <input type="hidden" name="other_user_id" id="selectedUserId" />
 
-          <!-- To field -->
           <div class="new-msg-to-row">
             <label class="new-msg-to-label">To:</label>
             <div class="new-msg-to-input-wrap">
-              <!-- REPLACE: search icon -->
               <img src="/images/Search.png" alt="Search" style="height: 18px; position:absolute; left:8px; top:50%; transform:translateY(-50%);">
               <input
                 type="text"
                 class="new-msg-to-input"
-                placeholder="Search for users by name or username..."
+                placeholder="Search and then click a user below..."
                 id="recipientInput"
                 oninput="filterUsers(this.value)"
                 autocomplete="off"
@@ -54,43 +49,40 @@
 
           <hr class="new-msg-form-divider" />
 
-          <!-- Message field -->
           <div class="new-msg-body-row">
             <label class="new-msg-body-label">Message:</label>
             <textarea
-              name="message"
+              name="message_text"
               class="new-msg-textarea"
               placeholder="Type your message here..."
               rows="8"
             ></textarea>
           </div>
 
-          <!-- Actions -->
           <div class="new-msg-actions">
             <a href="/messages" class="btn-nm-cancel">Cancel</a>
-            <button type="submit" class="btn-nm-send">Send Message</button>
+            <button type="submit" class="btn-nm-send" id="sendMessageBtn" disabled>Send Message</button>
           </div>
-
         </form>
       </div>
 
-      <!-- Suggested Users -->
       <section class="suggested-users-section">
         <h2 class="suggested-title">Suggested Users</h2>
         <div class="suggested-list" id="suggestedList">
           <% suggestedUsers.forEach(user => { %>
-          <div
-            class="suggested-item"
-            data-name="<%= user.name.toLowerCase() %> <%= user.username.toLowerCase() %>"
-            onclick="selectUser('<%= user.name %>')"
-          >
-            <div class="suggested-avatar"><%= user.initials %></div>
-            <div class="suggested-info">
-              <span class="suggested-name"><%= user.name %></span>
-              <span class="suggested-username"><%= user.username %></span>
+            <div
+              class="suggested-item"
+              data-name="<%= user.name.toLowerCase() %> <%= user.username.toLowerCase() %>"
+              data-user-id="<%= user.user_id %>"
+              onclick="selectUser(this, '<%= user.name %>', '<%= user.user_id %>')"
+            >
+              <div class="suggested-avatar"><%= user.initials %></div>
+              <div class="suggested-info">
+                <span class="suggested-name"><%= user.name %></span>
+                <span class="suggested-username"><%= user.username %></span>
+              </div>
+              <span class="suggested-status"><%= user.status %></span>
             </div>
-            <span class="suggested-status"><%= user.status %></span>
-          </div>
           <% }) %>
         </div>
       </section>
@@ -109,9 +101,58 @@
       });
     }
 
-    function selectUser(name) {
-      document.getElementById('recipientInput').value = name;
+    function updateSendButtonState() {
+      const userId = document.getElementById('selectedUserId').value.trim();
+      const message = document.querySelector('textarea[name="message_text"]').value.trim();
+      const sendBtn = document.getElementById('sendMessageBtn');
+
+      sendBtn.disabled = !(userId && message);
     }
+
+    function selectUser(element, name, userId) {
+      document.getElementById('recipientInput').value = name;
+      document.getElementById('selectedUserId').value = userId;
+
+      document.querySelectorAll('.suggested-item').forEach(item => {
+        item.classList.remove('suggested-item--selected');
+      });
+
+      element.classList.add('suggested-item--selected');
+
+      const messageBox = document.querySelector('textarea[name="message_text"]');
+      if (messageBox) {
+        messageBox.focus();
+      }
+
+      updateSendButtonState();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const messageBox = document.querySelector('textarea[name="message_text"]');
+      const form = document.querySelector('.new-msg-form');
+
+      if (messageBox) {
+        messageBox.addEventListener('input', updateSendButtonState);
+      }
+
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          const userId = document.getElementById('selectedUserId').value.trim();
+          const message = document.querySelector('textarea[name="message_text"]').value.trim();
+
+          if (!userId) {
+            e.preventDefault();
+            alert('Please select a user first.');
+            return;
+          }
+
+          if (!message) {
+            e.preventDefault();
+            alert('Message cannot be empty.');
+          }
+        });
+      }
+    });
   </script>
 
 </body>
