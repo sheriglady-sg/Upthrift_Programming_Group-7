@@ -6,6 +6,16 @@
     <title>Contact Us | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+            publicKey: "nE2AH-EQh35iokv7S",
+        });
+    })();
+    </script>
     <style>
         
         .split-body {
@@ -188,9 +198,11 @@
                         <textarea name="message" class="comment-input" style="height: 140px; resize: vertical;" placeholder="Your message..." required></textarea>
                     </div>
 
-                    <button type="submit" class="btn-post">Send Message</button>
+                    <button type="submit" class="btn-post" onclick="sendEmail()">Send Message</button>
                 </form>
             </div>
+            <script type="text/javascript" src="script.js">
+            </script>
         </section>
 
         <section class="image-side">
