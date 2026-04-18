@@ -146,6 +146,7 @@ async function login(req, res) {
 
 async function forgotPassword(req, res) {
     const email = req.body.email;
+    const successMessage = "If the email exists, a reset link has been generated. For local testing, please check the backend terminal.";
 
     if (!email) {
         if (isHtmlRequest(req)) {
@@ -163,45 +164,26 @@ async function forgotPassword(req, res) {
             [email]
         );
 
-        if (users.length === 0) {
-            if (isHtmlRequest(req)) {
-                return res.render("forget-password", {
-                    activePage: "forget-password",
-                    message: "If this email exists, a reset link will be shown below for local testing.",
-                    error: "",
-                    resetLink: ""
-                });
-            }
+        if (users.length > 0) {
+            const token = crypto.randomBytes(24).toString("hex");
+            const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
-            return res.json({
-                message: "If this email exists, a reset link will be created."
-            });
+            await pool.query(
+                "UPDATE user SET reset_token = ?, reset_expires = ? WHERE user_id = ?",
+                [token, expiresAt, users[0].user_id]
+            );
+
+            const resetLink = `${req.protocol}://${req.get("host")}/reset-password?token=${token}`;
+
+            console.log("Password reset link:", resetLink);
         }
 
-        const token = crypto.randomBytes(24).toString("hex");
-        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-
-        await pool.query(
-            "UPDATE user SET reset_token = ?, reset_expires = ? WHERE user_id = ?",
-            [token, expiresAt, users[0].user_id]
-        );
-
-        const resetLink = `${req.protocol}://${req.get("host")}/reset-password?token=${token}`;
-
-        console.log("Password reset link:", resetLink);
-
         if (isHtmlRequest(req)) {
-            return res.render("forget-password", {
-                activePage: "forget-password",
-                message: "Reset link generated for local testing.",
-                error: "",
-                resetLink: resetLink
-            });
+            return res.redirect(`/forget-password?message=${encodeURIComponent(successMessage)}`);
         }
 
         return res.json({
-            message: "Reset link generated",
-            resetLink: resetLink
+            message: successMessage
         });
     } catch (error) {
         console.error("Forgot password failed:", error);

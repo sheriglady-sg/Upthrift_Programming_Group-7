@@ -117,8 +117,7 @@ app.get("/forget-password", (req, res) => {
     res.render("forget-password", {
         activePage: "forget-password",
         message: req.query.message || "",
-        error: req.query.error || "",
-        resetLink: ""
+        error: req.query.error || ""
     });
 });
 
