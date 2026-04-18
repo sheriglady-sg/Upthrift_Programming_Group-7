@@ -116,6 +116,16 @@ app.get("/forget-password", (req, res) => {
     res.render("forget-password", {
         activePage: "forget-password",
         message: req.query.message || "",
+        error: req.query.error || "",
+        resetLink: ""
+    });
+});
+
+app.get("/reset-password", (req, res) => {
+    res.render("reset-password", {
+        activePage: "forget-password",
+        token: req.query.token || "",
+        message: req.query.message || "",
         error: req.query.error || ""
     });
 });
