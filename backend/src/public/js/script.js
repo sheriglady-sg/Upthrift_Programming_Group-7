@@ -6,11 +6,7 @@ function sendEmail() {
     };
     
     emailjs.send("service_vv4nmzn", "template_dairvfk", templateParams).then(
-  (response) => {
-    console.log('SUCCESS!', response.status, response.text);
-  },
-  (error) => {
-    console.log('FAILED...', error);
-  },
-);
+        () => alert('Message sent successfully!'),
+        () => alert('Failed to send. Please try again.')
+    );
 }

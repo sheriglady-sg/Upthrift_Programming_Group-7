@@ -174,34 +174,26 @@
                 
                 <p class="subtitle">Have questions or feedback? We'd love to hear from you.</p>
 
-                <% if (typeof message !== 'undefined' && message) { %>
-                    <div class="form-message success-message">✨ <%= message %></div>
-                <% } %>
-                
-                <% if (typeof error !== 'undefined' && error) { %>
-                    <div class="form-message error-message"><%= error %></div>
-                <% } %>
-
-                <form action="/send-message" method="POST" class="styled-form">
+                <form class="styled-form">
                     <div class="form-group">
                         <label class="form-label">Name</label>
-                        <input type="text" name="name" class="comment-input" placeholder="Your name" required>
+                        <input type="text" name="name" id="name" class="comment-input" placeholder="Your name" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="comment-input" placeholder="your@email.com" required>
+                        <input type="email" name="email" id="email" class="comment-input" placeholder="your@email.com" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Message</label>
-                        <textarea name="message" class="comment-input" style="height: 140px; resize: vertical;" placeholder="Your message..." required></textarea>
+                        <textarea name="message" id="message" class="comment-input" style="height: 140px; resize: vertical;" placeholder="Your message..." required></textarea>
                     </div>
 
-                    <button type="submit" class="btn-post" onclick="sendEmail()">Send Message</button>
+                    <button type="button" class="btn-post" onclick="sendEmail()">Send Message</button>
                 </form>
             </div>
-            <script type="text/javascript" src="script.js">
+            <script type="text/javascript" src="/js/script.js">
             </script>
         </section>
 
