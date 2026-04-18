@@ -32,7 +32,8 @@
 
       <!-- Compose form -->
       <div class="new-msg-form-card">
-        <form action="/messages/new" method="POST" class="new-msg-form">
+        <form action="/messages/start" method="POST" class="new-msg-form">
+          <input type="hidden" name="other_user_id" id="selectedUserId" />
 
           <!-- To field -->
           <div class="new-msg-to-row">
@@ -42,7 +43,6 @@
               <img src="/images/Search.png" alt="Search" style="height: 18px; position:absolute; left:8px; top:50%; transform:translateY(-50%);">
               <input
                 type="text"
-                name="recipient"
                 class="new-msg-to-input"
                 placeholder="Search for users by name or username..."
                 id="recipientInput"
