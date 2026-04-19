@@ -5,6 +5,19 @@ function isHtmlRequest(req) {
     return acceptHeader.includes("text/html");
 }
 
+function makeSlug(text) {
+    if (!text) {
+        return "";
+    }
+
+    return text
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
 function formatTimeAgo(dateString) {
     if (!dateString) {
         return "";
@@ -111,7 +124,7 @@ async function getFeedPage(req, res) {
             return {
                 id: post.post_id,
                 author: post.username,
-                authorSlug: post.username,
+                authorSlug: makeSlug(post.username),
                 authorAvatar: post.profile_pic_url || "",
                 content: post.caption || "No caption",
                 timeAgo: formatTimeAgo(post.creation_date),
@@ -167,7 +180,7 @@ async function getPostDetailsPage(req, res) {
         const postId = req.params.id;
 
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.creation_date, u.username, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username",
+            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url",
             [postId]
         );
 
@@ -176,7 +189,7 @@ async function getPostDetailsPage(req, res) {
         }
 
         const [commentRows] = await pool.query(
-            "SELECT c.content, c.created_at, u.username FROM comment c JOIN user u ON c.user_id = u.user_id WHERE c.post_id = ? ORDER BY c.created_at ASC",
+            "SELECT c.content, c.created_at, u.username, u.profile_pic_url FROM comment c JOIN user u ON c.user_id = u.user_id WHERE c.post_id = ? ORDER BY c.created_at ASC",
             [postId]
         );
 
@@ -187,6 +200,8 @@ async function getPostDetailsPage(req, res) {
             post: {
                 id: post.post_id,
                 author: post.username,
+                authorSlug: makeSlug(post.username),
+                authorAvatar: post.profile_pic_url || "",
                 content: post.caption || "No caption",
                 timeAgo: formatTimeAgo(post.creation_date),
                 fullDate: new Date(post.creation_date).toLocaleString(),
@@ -197,6 +212,8 @@ async function getPostDetailsPage(req, res) {
                 commentList: commentRows.map((comment) => {
                     return {
                         author: comment.username,
+                        authorSlug: makeSlug(comment.username),
+                        authorAvatar: comment.profile_pic_url || "",
                         text: comment.content,
                         timeAgo: formatTimeAgo(comment.created_at)
                     };

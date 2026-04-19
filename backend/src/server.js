@@ -11,6 +11,7 @@ const pool = require("./config/db");
 const postController = require("./controllers/postController");
 const storeController = require("./controllers/storeController");
 const eventController = require("./controllers/eventController");
+const profileController = require("./controllers/profileController");
 
 const app = express();
 const server = http.createServer(app);
@@ -179,6 +180,9 @@ app.get('/legal', (req, res) => {
 app.get("/feed", postController.getFeedPage);
 app.get("/create-post", postController.getCreatePostPage);
 app.get("/post/:id", postController.getPostDetailsPage);
+app.get("/profile", profileController.getProfilePage);
+app.get("/profile/saved", profileController.getSavedProfilePage);
+app.get("/user/:slug", profileController.getUserProfilePage);
 app.get("/events", eventController.getEventsPage);
 app.get("/events/:slug", eventController.getEventDetailsPage);
 app.post("/events/:slug/rsvp", eventController.postRsvp);

@@ -27,9 +27,9 @@
 
       <div class="events-list-hint">EVENTS LIST</div>
 
-      <div class="events-list">
-        <% events.forEach(event => { %>
-        <div class="event-card">
+      <div class="events-list" id="eventsList">
+        <% events.forEach((event, index) => { %>
+        <div class="event-card" data-index="<%= index %>">
             <div class="event-card-img">
               <% if (event.image) { %>
                 <img src="<%= event.image %>" alt="<%= event.title %>" class="event-thumb-img">
@@ -75,9 +75,39 @@
         <% } %>
       </div>
 
+      <!-- Load More -->
+      <% if (events.length > 0) { %>
+      <div class="load-more-wrap" id="loadMoreWrap">
+        <button class="btn-load-more" id="loadMoreBtn" onclick="loadMore()">Load More</button>
+      </div>
+      <% } %>
+
+      <script>
+        const PAGE_SIZE = 6;
+        let visible = PAGE_SIZE;
+
+        const cards = document.querySelectorAll('#eventsList .event-card');
+        const wrap = document.getElementById('loadMoreWrap');
+
+        function applyVisibility() {
+          cards.forEach((card, i) => {
+            card.style.display = i < visible ? '' : 'none';
+          });
+          if (visible >= cards.length) {
+            wrap.style.display = 'none';
+          }
+        }
+
+        function loadMore() {
+          visible += PAGE_SIZE;
+          applyVisibility();
+        }
+
+        applyVisibility();
+      </script>
+
     </main>
   </div>
   <%- include('components/footerlogin') %>
 </body>
 </html>
-

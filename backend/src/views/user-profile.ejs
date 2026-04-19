@@ -78,14 +78,17 @@
       <!-- Grid or About content -->
       <% if (activeTab === 'posts') { %>
       <div class="profile-grid">
+        <% if (user.postImages.length === 0) { %>
+          <div class="profile-grid-placeholder">No posts yet</div>
+        <% } %>
         <% user.postImages.forEach(p => { %>
-        <div class="profile-grid-item">
-          <% if (p.image) { %>
-            <img src="<%= p.image %>" alt="<%= p.label %>" class="profile-grid-img">
-          <% } else { %>
-            <div class="profile-grid-placeholder"><%= p.label %></div>
-          <% } %>
-        </div>
+          <a href="/post/<%= p.id %>" class="profile-grid-item">
+            <% if (p.image) { %>
+              <img src="<%= p.image %>" alt="<%= p.label %>" class="profile-grid-img">
+            <% } else { %>
+              <div class="profile-grid-placeholder"><%= p.label %></div>
+            <% } %>
+          </a>
         <% }) %>
       </div>
       <% } else { %>
