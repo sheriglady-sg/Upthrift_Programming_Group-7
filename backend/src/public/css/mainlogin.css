@@ -891,6 +891,7 @@ select { font-family: inherit; }
 
 .img-deg {
   float: left;
+  padding-right: 10px;
 }
 
 .footer-logo-text {
