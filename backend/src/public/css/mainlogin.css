@@ -508,6 +508,9 @@ select { font-family: inherit; }
   align-items: center;
   gap: 14px;
 }
+.chat-header-info {
+  padding-left: 30px;
+}
 /* fix new message to row */
 .new-msg-to-row {
   display: flex;
