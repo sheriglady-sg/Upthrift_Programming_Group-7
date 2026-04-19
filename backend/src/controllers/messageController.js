@@ -314,125 +314,58 @@ exports.sendImageMessage = async (req, res) => {
     const { conversation_id } = req.body;
     const senderUserId = req.session.user_id;
 
-    if (!senderUserId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    if (!conversation_id) {
-        return res.status(400).json({ message: "conversation_id is required" });
-    }
-
     if (!req.file) {
-        return res.status(400).json({ message: "Image file is required" });
+        return res.status(400).json({ message: "No image uploaded" });
     }
 
     try {
-        const [participantRows] = await pool.query(
-            `SELECT conversation_participant_id
-             FROM conversation_participant
-             WHERE conversation_id = ? AND user_id = ?`,
-            [conversation_id, senderUserId]
-        );
-
-        if (participantRows.length === 0) {
-            return res.status(403).json({
-                message: "You are not part of this conversation"
-            });
-        }
-
-        const [messageResult] = await pool.query(
+        // Save message (use placeholder text)
+        const [result] = await pool.query(
             `INSERT INTO message (conversation_id, sender_user_id, message_text)
              VALUES (?, ?, ?)`,
-            [conversation_id, senderUserId, ""]
+            [conversation_id, senderUserId, "//image"]
         );
 
-        const messageId = messageResult.insertId;
+        const messageId = result.insertId;
+
+        // Save media
         const mediaUrl = `/uploads/messages/${req.file.filename}`;
 
         await pool.query(
-            `INSERT INTO message_media (message_id, media_type, media_url, upload_order)
-             VALUES (?, ?, ?, ?)`,
-            [messageId, "photo", mediaUrl, 1]
+            `INSERT INTO message_media (message_id, media_url, media_type)
+             VALUES (?, ?, ?)`,
+            [messageId, mediaUrl, "image"]
         );
 
-        const [senderRows] = await pool.query(
-            `SELECT username
-             FROM user
-             WHERE user_id = ?
-             LIMIT 1`,
-            [senderUserId]
-        );
-
-        const senderName = senderRows.length > 0 ? senderRows[0].username : "Someone";
-
-        const [recipientRows] = await pool.query(
-            `SELECT user_id
-             FROM conversation_participant
-             WHERE conversation_id = ? AND user_id != ?
-             LIMIT 1`,
-            [conversation_id, senderUserId]
-        );
-
-        const io = req.app.get("io");
-
-        if (recipientRows.length > 0) {
-            const recipientUserId = recipientRows[0].user_id;
-
-            await pool.query(
-                `INSERT INTO notification (user_id, type, related_id, message, is_read)
-                 VALUES (?, ?, ?, ?, 0)`,
-                [
-                    recipientUserId,
-                    "new_message",
-                    conversation_id,
-                    `${senderName} sent you an image.`
-                ]
-            );
-
-            if (io) {
-                io.to(`user_${recipientUserId}`).emit("new_notification");
-            }
-        }
-
-        await pool.query(
-            `UPDATE conversation
-             SET last_updated_at = CURRENT_TIMESTAMP
-             WHERE conversation_id = ?`,
-            [conversation_id]
-        );
-
-        const [messageRows] = await pool.query(
-            `SELECT
+        // Fetch full message (important)
+        const [rows] = await pool.query(
+            `SELECT 
                 m.message_id,
                 m.conversation_id,
                 m.sender_user_id,
                 m.message_text,
                 m.sent_at,
-                m.is_read,
-                mm.media_url,
-                mm.media_type
+                mm.media_url
              FROM message m
-             LEFT JOIN message_media mm
-                ON m.message_id = mm.message_id
+             LEFT JOIN message_media mm ON m.message_id = mm.message_id
              WHERE m.message_id = ?`,
             [messageId]
         );
 
-        const newMessage = messageRows[0];
+        const newMessage = rows[0];
 
+        const io = req.app.get("io");
+
+        // 🔥 THIS IS THE MISSING PART
         if (io) {
             io.to(`conversation_${conversation_id}`).emit("new_message", newMessage);
         }
 
-        return res.status(201).json({
-            message: "Image sent successfully",
-            data: newMessage
-        });
+        return res.status(201).json(newMessage);
+
     } catch (error) {
         console.error("sendImageMessage error:", error);
-        return res.status(500).json({
-            message: "Failed to send image"
-        });
+        return res.status(500).json({ message: "Failed to send image" });
     }
 };
 
