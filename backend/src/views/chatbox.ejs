@@ -83,7 +83,10 @@
     let isTyping = false;
 
     //Join socket room//
+    socket.on("connect", () => {
+    console.log("Connected:", socket.id);
     socket.emit("join_conversation", conversationId);
+    });
 
    //Typing
    
@@ -238,6 +241,10 @@
           return;
         }
 
+        if (result.data) {
+        appendMessageWithDate(result.data);
+        }
+
         input.value = "";
         socket.emit("stop_typing", { conversationId });
         isTyping = false;
@@ -249,10 +256,13 @@
 
     //Recieve real time messages
     socket.on("new_message", (msg) => {
-      if (String(msg.conversation_id) === String(conversationId)) {
-        appendMessageWithDate(msg);
-      }
-    });
+    if (
+    String(msg.conversation_id) === String(conversationId) &&
+    String(msg.sender_user_id) !== String(userId)
+  ) {
+    appendMessageWithDate(msg);
+  }
+});
 
     socket.on("user_typing", ({ userName }) => {
   typingIndicator.style.display = "block";

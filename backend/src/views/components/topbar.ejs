@@ -1,25 +1,51 @@
 <header class="topbar">
   <a href="/feed" class="logo-link">
-    <!-- REPLACE: <img src="/images/logo.svg" alt="UpThrift" class="logo-img"> -->
     <!-- <span class="logo-text">UpThrift</span> -->
      <img src="/images/Upthrift_logo2.png" alt="UpThrift" class="logo-img" style="height:130px">
   </a>
   <div class="topbar-actions">
-    <!-- REPLACE: <img src="/images/avatar.jpg" alt="User" class="topbar-avatar"> -->
     <a href="/profile">
       <div class="avatar-placeholder topbar-avatar-placeholder"><img src="/images/ProfileDP.png" alt="User" class="topbar-avatar" style="width:34px;height:34px;border-radius:50%;object-fit:cover"></div>
     </a>
     <!-- Bell → Notifications -->
-    <a href="/notifications" class="icon-btn" aria-label="Notifications">
-      <!-- REPLACE: <img src="/images/bell.svg" alt="Notifications"> -->
-      <!-- <span class="icon-placeholder">🔔</span> -->
-      <img src="/images/Bell.svg" alt="Notifications" style="height: 20px;">
-    </a>
+    <a href="/notifications" class="notif-wrapper" aria-label="Notifications">
+      <img src="/images/Bell.svg" alt="Notifications" class = "notif-icon" style="height: 20px;">
+
+       <% if (unreadNotifications > 0) { %>
+      <span class="notif-badge"><%= unreadNotifications %></span>
+     <% } %>
+   </a>
     <!-- Gear → Settings -->
     <a href="/settings" class="icon-btn" aria-label="Settings">
-      <!-- REPLACE: <img src="/images/gear.svg" alt="Settings"> -->
       <!-- <span class="icon-placeholder">⚙️</span> -->
       <img src="/images/Settings.svg" alt="Settings" style="height: 20px;">
     </a>
   </div>
 </header>
+
+<!---Notification Socket-->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const notificationSocket = io();
+
+  notificationSocket.on("connect", () => {
+    console.log("Notification socket connected:", notificationSocket.id);
+  });
+
+  notificationSocket.on("new_notification", () => {
+    const wrapper = document.querySelector(".notif-wrapper");
+    const badge = document.querySelector(".notif-badge");
+
+    if (!wrapper) return;
+
+    if (badge) {
+      const currentCount = parseInt(badge.textContent, 10) || 0;
+      badge.textContent = currentCount + 1;
+    } else {
+      const newBadge = document.createElement("span");
+      newBadge.className = "notif-badge";
+      newBadge.textContent = "1";
+      wrapper.appendChild(newBadge);
+    }
+  });
+</script>

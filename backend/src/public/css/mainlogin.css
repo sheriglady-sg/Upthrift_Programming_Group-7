@@ -2083,3 +2083,28 @@ select { font-family: inherit; }
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/*Bell Alert*/
+.notif-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.notif-icon {
+  height: 22px;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.2;
+}

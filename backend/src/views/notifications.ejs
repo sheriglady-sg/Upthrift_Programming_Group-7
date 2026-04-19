@@ -24,7 +24,6 @@
             margin-right: auto;
         }
 
-        
         .notification-list {
             display: flex;
             flex-direction: column;
@@ -50,7 +49,6 @@
             border-color: var(--color-accent);
         }
 
-       
         .icon-circle {
             width: 48px;
             height: 48px;
@@ -79,17 +77,11 @@
             margin-bottom: 4px;
         }
 
-        .notif-title span {
-            font-weight: 400;
-            color: #666;
-        }
-
         .notif-time {
             font-size: 12px;
             color: #999;
         }
 
-        
         .load-more {
             margin: 40px auto;
             display: block;
@@ -101,6 +93,16 @@
             cursor: pointer;
             text-decoration: underline;
         }
+
+        .notification-card--unread {
+            border-left: 4px solid #7f8f63;
+            background-color: #fcfcf7;
+        }
+
+        .notification-link {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 <body style="font-family: var(--font-body);">
@@ -108,53 +110,37 @@
     <%- include('components/topbar') %>
 
     <div class="notifications-container">
-        <%- include('components/sidebar') %>
+        <%- include('components/sidebar', { activePage }) %>
 
         <main class="notifications-main">
             <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Notifications</h1>
 
             <div class="notification-list">
-                
-                <div class="notification-card">
-                    <div class="icon-circle type-like"><img src="/images/Heart_02.svg" alt="Like" style="height: 20px;"></div>
-                    <div class="notif-content">
-                        <div class="notif-title">Mike R. <span>liked your post</span></div>
-                        <div class="notif-time">5 minutes ago</div>
+                <% if (!notifications || notifications.length === 0) { %>
+                    <div class="notification-card">
+                        <div class="notif-content">
+                            <div class="notif-title">No notifications yet</div>
+                            <div class="notif-time">You're all caught up.</div>
+                        </div>
                     </div>
-                </div>
+                <% } %>
 
-                <div class="notification-card">
-                    <div class="icon-circle type-comment"><img src="/images/Chat_Circle_Dots.svg" alt="Comment" style="height: 20px;"></div>
-                    <div class="notif-content">
-                        <div class="notif-title">Emma L. <span>commented on your post</span></div>
-                        <div class="notif-time">1 hour ago</div>
-                    </div>
-                </div>
+               <% notifications.forEach(notification => { %>
+  <a href="<%= notification.link %>" class="notification-link">
+    <div class="notification-card <%= notification.isRead ? '' : 'notification-card--unread' %>">
 
-                <div class="notification-card">
-                    <div class="icon-circle type-follow"><img src="/images/User_Circle.png" alt="Follow" style="height: 20px;"></div>
-                    <div class="notif-content">
-                        <div class="notif-title">John D. <span>started following you</span></div>
-                        <div class="notif-time">2 hours ago</div>
-                    </div>
-                </div>
+      <div class="icon-circle <%= notification.iconClass %>">
+        <img src="<%= notification.iconSrc %>" style="height: 20px;">
+      </div>
 
-                <div class="notification-card">
-                    <div class="icon-circle type-system"><img src="/images/Calendar1.svg" alt="System" style="height: 20px;"></div>
-                    <div class="notif-content">
-                        <div class="notif-title">Spring Thrift Sale <span>is starting tomorrow</span></div>
-                        <div class="notif-time">3 hours ago</div>
-                    </div>
-                </div>
+      <div class="notif-content">
+        <div class="notif-title"><%= notification.message %></div>
+        <div class="notif-time"><%= notification.timeAgo %></div>
+      </div>
 
-                <div class="notification-card">
-                    <div class="icon-circle type-like"><img src="/images/Heart_02.svg" alt="Like" style="height: 20px;"></div>
-                    <div class="notif-content">
-                        <div class="notif-title">Alex K. <span>liked your post</span></div>
-                        <div class="notif-time">5 hours ago</div>
-                    </div>
-                </div>
-
+    </div>
+  </a>
+            <% }) %>
             </div>
 
             <button class="load-more">Load More Notifications</button>

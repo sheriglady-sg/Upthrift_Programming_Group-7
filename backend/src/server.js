@@ -16,6 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "upthrift-session-secret",
     resave: false,
@@ -27,9 +28,38 @@ const sessionMiddleware = session({
     }
 });
 
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res || {}, next);
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
+
+
+//alert
+app.use(async (req, res, next) => {
+    if (!req.session || !req.session.user_id) {
+        res.locals.unreadNotifications = 0;
+        return next();
+    }
+
+    try {
+        const [rows] = await pool.query(
+            `SELECT COUNT(*) AS count
+             FROM notification
+             WHERE user_id = ? AND is_read = 0`,
+            [req.session.user_id]
+        );
+
+        res.locals.unreadNotifications = rows[0].count;
+    } catch (error) {
+        console.error("Notification count error:", error);
+        res.locals.unreadNotifications = 0;
+    }
+
+    next();
+});
 
 app.set("io", io);
 
@@ -38,44 +68,39 @@ app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/public"));
 
 /* share session with socket*/
-io.use((socket, next) => {
-    sessionMiddleware(socket.request, {}, next);
-});
-
 io.on("connection", (socket) => {
     const session = socket.request.session;
 
     if (!session || !session.user_id) {
         return socket.disconnect();
     }
-    
+
     console.log("Socket connected:", socket.id, "User:", session.user_id);
 
+    // user-specific room (for notifications)
+    socket.join(`user_${session.user_id}`);
 
-/*Join conversation*/
-    socket.on("join_conversation", (conversationId)=> {
+    //join chat room
+    socket.on("join_conversation", (conversationId) => {
         socket.join(`conversation_${conversationId}`);
     });
 
-/*Leave conversation*/
-
+    //leave chat room
     socket.on("leave_conversation", (conversationId) => {
         socket.leave(`conversation_${conversationId}`);
     });
 
-    /*Typing conversation*/
-
-     socket.on("typing", ({ conversationId, userName }) => {
+    //typing indicator
+    socket.on("typing", ({ conversationId, userName }) => {
         socket.to(`conversation_${conversationId}`).emit("user_typing", { userName });
     });
 
-     socket.on("stop_typing", ({ conversationId }) => {
+    socket.on("stop_typing", ({ conversationId }) => {
         socket.to(`conversation_${conversationId}`).emit("user_stop_typing");
     });
 
     socket.on("disconnect", () => {
         console.log("Socket disconnected:", socket.id);
-
     });
 });
 
@@ -141,11 +166,9 @@ app.get('/settings', (req, res) => {
     }); 
 });
 
-app.get('/notifications', (req, res) => {
-    res.render('notifications', { 
-        activePage: 'messages' 
-    }); 
-});
+//Notification router
+const notificationRoutes = require("./routes/notificationRoutes");
+app.use("/notifications", notificationRoutes);
 
 app.get('/legal', (req, res) => {
     res.render('legal', { 
