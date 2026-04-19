@@ -36,9 +36,9 @@
       </form>
 
       <!-- Store list -->
-      <div class="store-list">
-        <% stores.forEach(store => { %>
-        <div class="store-card">
+      <div class="store-list" id="storeList">
+        <% stores.forEach((store, index) => { %>
+        <div class="store-card" data-index="<%= index %>">
           <div class="store-card-img">
             <% if (store.image) { %>
               <img src="<%= store.image %>" alt="<%= store.name %>" class="store-thumb-img">
@@ -68,6 +68,37 @@
           <% } %>
         <% } %>
       </div>
+
+      <!-- Load More -->
+      <% if (stores.length > 0) { %>
+      <div class="load-more-wrap" id="loadMoreWrap">
+        <button class="btn-load-more" id="loadMoreBtn" onclick="loadMore()">Load More</button>
+      </div>
+      <% } %>
+
+      <script>
+        const PAGE_SIZE = 6;
+        let visible = PAGE_SIZE;
+
+        const cards = document.querySelectorAll('#storeList .store-card');
+        const wrap = document.getElementById('loadMoreWrap');
+
+        function applyVisibility() {
+          cards.forEach((card, i) => {
+            card.style.display = i < visible ? '' : 'none';
+          });
+          if (visible >= cards.length) {
+            wrap.style.display = 'none';
+          }
+        }
+
+        function loadMore() {
+          visible += PAGE_SIZE;
+          applyVisibility();
+        }
+
+        applyVisibility();
+      </script>
 
     </main>
   </div>
