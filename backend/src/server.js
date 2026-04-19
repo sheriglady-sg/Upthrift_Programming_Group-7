@@ -37,6 +37,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
 
+app.use(async (req, res, next) => {
+    res.locals.currentUser = null;
+
+    if (!req.session || !req.session.user_id) {
+        return next();
+    }
+
+    try {
+        const [rows] = await pool.query(
+            `SELECT user_id, username, profile_pic_url
+             FROM user
+             WHERE user_id = ?`,
+            [req.session.user_id]
+        );
+
+        if (rows.length > 0) {
+            res.locals.currentUser = rows[0];
+        }
+    } catch (error) {
+        console.error("Current user middleware error:", error);
+    }
+
+    next();
+});
 
 //alert
 app.use(async (req, res, next) => {
@@ -161,15 +185,12 @@ app.get("/get-started", (req, res) => {
     res.redirect("/signup");
 });
 
-app.get('/settings', (req, res) => {
-    res.render('settings', { 
-        activePage: 'profile' 
-    }); 
-});
-
 //Notification router
 const notificationRoutes = require("./routes/notificationRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
+
 app.use("/notifications", notificationRoutes);
+app.use("/settings", settingsRoutes);
 
 app.get('/legal', (req, res) => {
     res.render('legal', { 

@@ -5,8 +5,16 @@
   </a>
   <div class="topbar-actions">
     <a href="/profile">
-      <div class="avatar-placeholder topbar-avatar-placeholder"><img src="/images/ProfileDP.png" alt="User" class="topbar-avatar" style="width:34px;height:34px;border-radius:50%;object-fit:cover"></div>
-    </a>
+  <div class="avatar-placeholder topbar-avatar-placeholder">
+    <img
+      src="<%= currentUser && currentUser.profile_pic_url ? currentUser.profile_pic_url : '/images/ProfileDP.png' %>"
+      alt="User"
+      class="topbar-avatar"
+      style="width:34px;height:34px;border-radius:50%;object-fit:cover"
+    >
+  </div>
+</a>
+
     <!-- Bell → Notifications -->
     <a href="/notifications" class="notif-wrapper" aria-label="Notifications">
       <img src="/images/Bell.svg" alt="Notifications" class = "notif-icon" style="height: 20px;">

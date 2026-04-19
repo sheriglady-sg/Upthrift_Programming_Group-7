@@ -141,112 +141,151 @@
     <%- include('components/topbar') %>
 
     <div class="settings-container">
-        <%- include('components/sidebar') %>
-
+     <%- include('components/sidebar', { activePage: 'profile' }) %>
         <main class="settings-main">
             <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Settings</h1>
 
-            <div class="settings-tabs">
-                <button class="tab-btn" onclick="openTab(event, 'account-info')"><img src="/images/User_02.svg" alt="Account Info" style="height: 18px; margin-right: 5px;"> Account Info</button>
-                <button class="tab-btn" onclick="openTab(event, 'profile')"><img src="/images/User_Circle.png" alt="Profile" style="height: 18px; margin-right: 5px;"> Profile</button>
-                <button class="tab-btn" onclick="openTab(event, 'privacy')"><img src="/images/Lock.png" alt="Privacy" style="height: 18px; margin-right: 5px;"> Privacy</button>
+<div class="settings-tabs">
+    <button class="tab-btn active" onclick="openTab(event, 'account-info')">
+        <img src="/images/User_02.svg" alt="Account Info" style="height: 18px; margin-right: 5px;">
+        Account Info
+    </button>
+    <button class="tab-btn" onclick="openTab(event, 'profile')">
+        <img src="/images/User_Circle.png" alt="Profile" style="height: 18px; margin-right: 5px;">
+        Profile
+    </button>
+    <button class="tab-btn" onclick="openTab(event, 'privacy')">
+        <img src="/images/Lock.png" alt="Privacy" style="height: 18px; margin-right: 5px;">
+        Privacy
+    </button>
+</div>
+
+
+<div id="account-info" class="settings-section active">
+    <div class="content-card">
+        <div class="section-header">ACCOUNT INFO</div>
+
+        <form method="POST" action="/settings/account">
+            <div class="info-row">
+                <label class="info-label">Username</label>
+                <input type="text" name="username" class="comment-input" value="<%= user.username %>">
             </div>
 
-            <div id="account-info" class="settings-section active">
-                <div class="content-card">
-                    <div class="section-header">ACCOUNT INFO</div>
-                    <div class="info-row">
-                        <label class="info-label">Full Name</label>
-                        <div class="info-value">Sarah Martinez</div>
-                    </div>
-                    <div class="info-row">
-                        <label class="info-label">Email Address</label>
-                        <div class="info-value">sarah@example.com</div>
-                    </div>
-                    <div class="info-row">
-                        <label class="info-label">Username</label>
-                        <div class="info-value">@sarahm_thrift</div>
-                    </div>
-                    <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
-                    <h3 style="font-family: var(--font-display); margin-bottom:20px;">Change Password</h3>
-                    <div class="form-group">
-                        <label class="form-label">Current Password</label>
-                        <input type="password" class="comment-input" placeholder="********">
-                    </div>
-                    <div class="form-group" style="margin-top:15px;">
-                        <label class="form-label">New Password</label>
-                        <input type="password" class="comment-input" placeholder="********">
-                    </div>
-                    <button class="btn-post" style="width:100%; margin-top:30px;">Save Changes</button>
-                </div>
+            <div class="info-row">
+                <label class="info-label">Email Address</label>
+                <input type="email" name="email" class="comment-input" value="<%= user.email %>">
             </div>
 
-            <div id="profile" class="settings-section">
-                <div class="content-card">
-                    <div class="section-header">PROFILE</div>
-                    <div class="info-row" style="display:flex; align-items:center; gap:20px;">
-                        <img src="/images/ProfileDP.png" alt="Profile Photo" class="profile-avatar-img">
-                        <button class="btn-post" style="background:#e9e9e9; color:#333; width:auto; padding:8px 20px;">Upload New Photo</button>
-                    </div>
-                    <div class="form-group" style="margin-top:20px;">
-                        <label class="form-label">Bio</label>
-                        <textarea class="comment-input" style="height:80px;">Vintage clothing enthusiast 🌿 Sustainable fashion advocate.</textarea>
-                    </div>
-                    <button class="btn-post" style="width:100%; margin-top:30px;">Save Changes</button>
-                </div>
+            <button class="btn-post" style="width:100%; margin-top:20px;">Save Account Info</button>
+        </form>
+
+        <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
+
+        <h3 style="font-family: var(--font-display); margin-bottom:20px;">Change Password</h3>
+
+        <form method="POST" action="/settings/password">
+            <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" name="currentPassword" class="comment-input" placeholder="********">
             </div>
 
-            <div id="privacy" class="settings-section">
-                <div class="content-card">
-                    <div class="section-header">PRIVACY SETTINGS</div>
-                    <div class="flex-between">
-                        <div>
-                            <div class="info-label">Private Account</div>
-                            <div style="font-size:12px; color:#999;">Only approved followers can see your posts</div>
-                        </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-                    </div>
-                    <div class="flex-between">
-                        <div>
-                            <div class="info-label">Show Activity Status</div>
-                        </div>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                    </div>
-                </div>
+            <div class="form-group" style="margin-top:15px;">
+                <label class="form-label">New Password</label>
+                <input type="password" name="newPassword" class="comment-input" placeholder="********">
+            </div>
 
-             <div class="content-card" style="border-color: #ffdce0;">
-                    <div class="section-header" style="color:#ff4d4f;">LOG OUT</div>
-                    <div class="flex-between" style="border:none; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div class="info-label">Sign Out</div>
-                            <div style="font-size:12px; color:#999;">You will be redirected to the login page</div>
-                        </div>
-                        <div style="flex: 0; min-width: 140px; display: flex; justify-content: flex-end;">
-                            <button class="btn-post" style="background:#ff4d4f; color:#fff; width: 140px; height: 40px; padding: 0 20px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; white-space: nowrap; border-radius: 8px;">
-                                Log Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-        </main>
+            <button class="btn-post" style="width:100%; margin-top:30px;">Save Password</button>
+        </form>
     </div>
+</div>
+
+
+
+<div id="profile" class="settings-section">
+    <div class="content-card">
+        <div class="section-header">PROFILE</div>
+
+        <form method="POST" action="/settings/profile-picture" enctype="multipart/form-data">
+            <div class="info-row" style="display:flex; align-items:center; gap:20px;">
+                <img src="<%= user.profile_pic_url || '/images/ProfileDP.png' %>" alt="Profile Photo" class="profile-avatar-img">
+                <input type="file" name="profile_photo" accept="image/*">
+            </div>
+
+            <button class="btn-post" style="width:100%; margin-top:20px;">Upload New Photo</button>
+        </form>
+
+        <form method="POST" action="/settings/profile">
+            <div class="form-group" style="margin-top:20px;">
+                <label class="form-label">Bio</label>
+                <textarea name="bio" class="comment-input" style="height:80px;"><%= user.bio || "" %></textarea>
+            </div>
+
+            <button class="btn-post" style="width:100%; margin-top:30px;">Save Bio</button>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="privacy" class="settings-section">
+    <div class="content-card">
+        <div class="section-header">PRIVACY SETTINGS</div>
+
+        <form method="POST" action="/settings/privacy">
+            <div class="flex-between">
+                <div>
+                    <div class="info-label">Private Account</div>
+                    <div style="font-size:12px; color:#999;">Only approved followers can see your posts</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" name="is_private" <%= user.is_private_account ? "checked" : "" %>>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="btn-post" style="margin-top:20px; width:100%;">Save Changes</button>
+        </form>
+    </div>
+    <div class="content-card" style="border-color: #ffdce0;">
+        <div class="section-header" style="color:#ff4d4f;">LOG OUT</div>
+        <div class="flex-between" style="border:none; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div class="info-label">Sign Out</div>
+                <div style="font-size:12px; color:#999;">You will be redirected to the login page</div>
+            </div>
+            <div style="flex: 0; min-width: 140px; display: flex; justify-content: flex-end;">
+                <form method="POST" action="/auth/logout">
+                    <button class="btn-post" style="background:#ff4d4f; color:#fff; width: 140px; height: 40px; padding: 0 20px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; white-space: nowrap; border-radius: 8px;">
+                        Log Out
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <%- include('components/footerlogin') %>
 
     <script>
-        function openTab(evt, tabName) {
-            var i, x, tablinks;
-            x = document.getElementsByClassName("settings-section");
-            for (i = 0; i < x.length; i++) {
-                x[i].classList.remove("active");
-            }
-            tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
+    function openTab(evt, tabName) {
+        var i, x, tablinks;
+        x = document.getElementsByClassName("settings-section");
+        for (i = 0; i < x.length; i++) {
+            x[i].classList.remove("active");
         }
-    </script>
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("account-info").classList.add("active");
+        document.getElementsByClassName("tab-btn")[0].classList.add("active");
+    });
+</script>
+
 </body>
 </html>

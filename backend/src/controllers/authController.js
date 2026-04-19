@@ -266,10 +266,19 @@ async function resetPassword(req, res) {
     }
 }
 
+/*Logout*/
+
+function logout(req, res) {
+    req.session.destroy(() => {
+        res.redirect("/login");
+    });
+}
+
 module.exports = {
     signup,
     login,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    logout,
 };
 
