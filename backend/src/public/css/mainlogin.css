@@ -509,7 +509,7 @@ select { font-family: inherit; }
   gap: 14px;
 }
 .chat-header-info {
-  padding-left: 30px;
+  padding-left: 35px;
 }
 /* fix new message to row */
 .new-msg-to-row {
