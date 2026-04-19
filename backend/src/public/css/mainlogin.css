@@ -364,6 +364,14 @@ select { font-family: inherit; }
   gap: 14px;
 }
 
+.footer-contact-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: color 0.15s;
+}
 .action-btn,
 .chat-action-btn {
   display: inline-flex;
@@ -511,6 +519,10 @@ select { font-family: inherit; }
 }
 
 /* new message to row */
+.chat-header-info {
+  padding-left: 35px;
+}
+/* fix new message to row */
 .new-msg-to-row {
   display: flex;
   align-items: center;
@@ -900,6 +912,7 @@ select { font-family: inherit; }
 
 .img-deg {
   float: left;
+  padding-right: 10px;
 }
 
 .footer-logo-text {
