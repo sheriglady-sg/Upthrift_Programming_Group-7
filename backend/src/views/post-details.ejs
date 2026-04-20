@@ -54,11 +54,13 @@
         <% } %>
         <div class="post-actions">
           <div class="post-actions-left">
-            <button class="action-btn like-btn" aria-label="Like">
-              <!-- REPLACE: Heart icon -->
-              <img src="/images/Heart_02.svg" alt="Like" style="height: 20px;">
-              <span class="action-count"><%= post.likes %></span>
-            </button>
+            <form action="/posts/<%= post.id %>/like" method="POST" style="display:inline;">
+              <button class="action-btn like-btn" aria-label="Like" type="submit">
+                <!-- REPLACE: Heart icon -->
+                <img src="/images/Heart_02.svg" alt="Like" style="height: 20px;">
+                <span class="action-count"><%= post.likes %></span>
+              </button>
+            </form>
             <button class="action-btn" aria-label="Comments">
               <!-- REPLACE: Comment icon -->
               <img src="/images/Chat_Circle_Dots.svg" alt="Comments" style="height: 18px;">

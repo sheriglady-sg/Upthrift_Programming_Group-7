@@ -3,7 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const router = express.Router();
-const { createPost, getFeed } = require("../controllers/postController");
+const { createPost, getFeed, toggleLike } = require("../controllers/postController");
+const { handleValidationErrors } = require("../middleware/validation");
+const { createPostValidation } = require("../middleware/validators");
 
 const uploadFolder = path.join(__dirname, "..", "public", "uploads");
 
@@ -33,7 +35,8 @@ const upload = multer({
     }
 });
 
-router.post("/", upload.single("media"), createPost);
+router.post("/", upload.single("media"), createPostValidation, handleValidationErrors("/create-post"), createPost);
+router.post("/:id/like", toggleLike);
 router.get("/", getFeed);
 
 module.exports = router;
