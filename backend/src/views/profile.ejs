@@ -49,12 +49,10 @@
                 </div>
               </div>
               <div class="profile-actions">
-                <button class="btn-profile-action">
-                  <!-- REPLACE: share icon -->
+                <button class="btn-profile-action" type="button" onclick="shareProfile()">
                   <img src="/images/Navigation.svg" alt="Share Profile" style="height: 18px;">Share Profile
                 </button>
                 <button class="btn-profile-action">
-                  <!-- REPLACE: settings icon -->
                  <a href="/settings" style="color:inherit;">
                   <img src="/images/Edit_Pencil_01.svg" alt="Edit Profile" style="height: 18px; margin-right: 5px;">Edit Profile
                 </a>
@@ -112,6 +110,40 @@
   </div>
 <!-- footer -->
   <%- include('components/footerlogin') %>
+
+  <script>
+    async function shareProfile() {
+      const fullUrl = window.location.origin + "/profile";
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "UpThrift Profile",
+            url: fullUrl
+          });
+          return;
+        } catch (error) {
+        }
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          alert("Profile link copied");
+          return;
+        } catch (error) {
+        }
+      }
+
+      const input = document.createElement("input");
+      input.value = fullUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      document.body.removeChild(input);
+      alert("Profile link copied");
+    }
+  </script>
 
 </body>
 </html>
