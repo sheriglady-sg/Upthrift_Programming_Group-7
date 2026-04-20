@@ -73,7 +73,7 @@
                 <img src="/images/Bookmark.svg" alt="Bookmark" style="height: 20px;<%= post.isSaved ? 'filter:brightness(0) invert(1);' : '' %>">
               </button>
             </form>
-            <button class="action-btn" aria-label="Share">
+            <button class="action-btn" aria-label="Share" type="button" onclick="sharePost('/post/<%= post.id %>')">
               <img src="/images/Navigation.svg" alt="Share" style="height: 18px;">
             </button>
           </div>
@@ -123,6 +123,40 @@
   </div>
 <!-- footer -->
   <%- include('components/footerlogin') %>
+
+  <script>
+    async function sharePost(path) {
+      const fullUrl = window.location.origin + path;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "UpThrift Post",
+            url: fullUrl
+          });
+          return;
+        } catch (error) {
+        }
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(fullUrl);
+          alert("Post link copied");
+          return;
+        } catch (error) {
+        }
+      }
+
+      const input = document.createElement("input");
+      input.value = fullUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      document.body.removeChild(input);
+      alert("Post link copied");
+    }
+  </script>
 
 </body>
 </html>
