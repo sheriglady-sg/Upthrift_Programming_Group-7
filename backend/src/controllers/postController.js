@@ -319,21 +319,25 @@ async function addComment(req, res) {
 
             const authorName = userRows.length > 0 ? userRows[0].username : "Someone";
 
-            await pool.query(
-                `INSERT INTO notification (user_id, type, related_id, message, is_read)
-                 VALUES (?, ?, ?, ?, 0)`,
-                [
-                    postRows[0].user_id,
-                    "new_comment",
-                    postId,
-                    `${authorName} commented on your post.`
-                ]
-            );
+            try {
+                await pool.query(
+                    `INSERT INTO notification (user_id, type, related_id, message, is_read)
+                     VALUES (?, ?, ?, ?, 0)`,
+                    [
+                        postRows[0].user_id,
+                        "new_comment",
+                        postId,
+                        `${authorName} commented on your post.`
+                    ]
+                );
 
-            const io = req.app.get("io");
+                const io = req.app.get("io");
 
-            if (io) {
-                io.to(`user_${postRows[0].user_id}`).emit("new_notification");
+                if (io) {
+                    io.to(`user_${postRows[0].user_id}`).emit("new_notification");
+                }
+            } catch (error) {
+                console.error("Comment notification skipped:", error.message);
             }
         }
 

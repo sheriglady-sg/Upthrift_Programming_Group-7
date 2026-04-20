@@ -139,49 +139,55 @@ exports.renderMessagesPage = async (req, res) => {
     }
 
     try {
-        const [rows] = await pool.query(
-            `SELECT
-                c.conversation_id AS id,
-                u.username AS name,
-                u.profile_pic_url AS avatar,
-                m.message_text AS lastMessage,
-                m.sent_at AS lastMessageTime,
-                mm.media_url
-             FROM conversation_participant cp
-             JOIN conversation c
-                ON cp.conversation_id = c.conversation_id
-             JOIN conversation_participant cp2
-                ON cp.conversation_id = cp2.conversation_id
-               AND cp2.user_id != cp.user_id
-             JOIN user u
-                ON cp2.user_id = u.user_id
-             LEFT JOIN message m
-                ON m.message_id = (
-                    SELECT message_id
-                    FROM message
-                    WHERE conversation_id = c.conversation_id
-                    ORDER BY sent_at DESC
-                    LIMIT 1
-                )
-             LEFT JOIN message_media mm
-                ON m.message_id = mm.message_id
-             WHERE cp.user_id = ?
-             ORDER BY m.sent_at DESC`,
-            [currentUserId]
-        );
+        let conversations = [];
 
-        const conversations = rows.map((row) => ({
-            id: row.id,
-            name: row.name,
-            avatar: row.avatar,
-            initials: row.name
-                ? row.name.split(" ").map(word => word[0]).join("").toUpperCase()
-                : "?",
-            lastMessage: row.lastMessage
-                ? row.lastMessage
-                : (row.media_url ? "📷 Image" : "Start a conversation"),
-            timeAgo: formatTimeAgo(row.lastMessageTime)
-        }));
+        try {
+            const [rows] = await pool.query(
+                `SELECT
+                    c.conversation_id AS id,
+                    u.username AS name,
+                    u.profile_pic_url AS avatar,
+                    m.message_text AS lastMessage,
+                    m.sent_at AS lastMessageTime,
+                    mm.media_url
+                 FROM conversation_participant cp
+                 JOIN conversation c
+                    ON cp.conversation_id = c.conversation_id
+                 JOIN conversation_participant cp2
+                    ON cp.conversation_id = cp2.conversation_id
+                   AND cp2.user_id != cp.user_id
+                 JOIN user u
+                    ON cp2.user_id = u.user_id
+                 LEFT JOIN message m
+                    ON m.message_id = (
+                        SELECT message_id
+                        FROM message
+                        WHERE conversation_id = c.conversation_id
+                        ORDER BY sent_at DESC
+                        LIMIT 1
+                    )
+                 LEFT JOIN message_media mm
+                    ON m.message_id = mm.message_id
+                 WHERE cp.user_id = ?
+                 ORDER BY m.sent_at DESC`,
+                [currentUserId]
+            );
+
+            conversations = rows.map((row) => ({
+                id: row.id,
+                name: row.name,
+                avatar: row.avatar,
+                initials: row.name
+                    ? row.name.split(" ").map(word => word[0]).join("").toUpperCase()
+                    : "?",
+                lastMessage: row.lastMessage
+                    ? row.lastMessage
+                    : (row.media_url ? "📷 Image" : "Start a conversation"),
+                timeAgo: formatTimeAgo(row.lastMessageTime)
+            }));
+        } catch (error) {
+            console.error("Messages fallback:", error.message);
+        }
 
         return res.render("messages", {
             activePage: "messages",

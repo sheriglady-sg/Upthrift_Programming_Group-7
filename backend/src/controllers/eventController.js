@@ -107,6 +107,23 @@ function getDirectionsUrl(address) {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || "")}`;
 }
 
+function makeSeedEventRow(event) {
+    return {
+        event_id: event.event_id,
+        title: event.title,
+        description: event.description,
+        event_type: event.event_type,
+        address: event.address,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        start_datetime: event.start_datetime,
+        end_datetime: event.end_datetime,
+        website_url: event.website_url,
+        image_url: event.image_url,
+        attendee_count: 0
+    };
+}
+
 async function ensureEventsInDatabase() {
     if (eventsLoaded) {
         return;
@@ -186,43 +203,48 @@ function mapEventDetail(event, index) {
 }
 
 async function loadEventRows() {
-    await ensureEventsInDatabase();
+    try {
+        await ensureEventsInDatabase();
 
-    const [rows] = await pool.query(
-        `SELECT
-            e.event_id,
-            e.title,
-            e.description,
-            e.event_type,
-            e.address,
-            e.latitude,
-            e.longitude,
-            e.start_datetime,
-            e.end_datetime,
-            e.website_url,
-            e.image_url,
-            COUNT(er.reminder_id) AS attendee_count
-         FROM event e
-         LEFT JOIN event_reminder er
-            ON er.event_id = e.event_id
-            AND er.rsvp_status = 'going'
-         WHERE e.is_approved = 1
-         GROUP BY
-            e.event_id,
-            e.title,
-            e.description,
-            e.event_type,
-            e.address,
-            e.latitude,
-            e.longitude,
-            e.start_datetime,
-            e.end_datetime,
-            e.website_url,
-            e.image_url
-         ORDER BY e.start_datetime ASC`
-    );
+        const [rows] = await pool.query(
+            `SELECT
+                e.event_id,
+                e.title,
+                e.description,
+                e.event_type,
+                e.address,
+                e.latitude,
+                e.longitude,
+                e.start_datetime,
+                e.end_datetime,
+                e.website_url,
+                e.image_url,
+                COUNT(er.reminder_id) AS attendee_count
+             FROM event e
+             LEFT JOIN event_reminder er
+                ON er.event_id = e.event_id
+                AND er.rsvp_status = 'going'
+             WHERE e.is_approved = 1
+             GROUP BY
+                e.event_id,
+                e.title,
+                e.description,
+                e.event_type,
+                e.address,
+                e.latitude,
+                e.longitude,
+                e.start_datetime,
+                e.end_datetime,
+                e.website_url,
+                e.image_url
+             ORDER BY e.start_datetime ASC`
+        );
 
-    return rows;
+        return rows;
+    } catch (error) {
+        console.error("Event table load failed, using local event data:", error.message);
+        return eventsData.map(makeSeedEventRow);
+    }
 }
 
 async function findEventBySlug(slug) {

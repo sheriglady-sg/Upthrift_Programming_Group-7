@@ -12,37 +12,38 @@ exports.renderNotificationsPage = async (req, res) => {
     }
 
     try {
+        let notifications = [];
 
-//Fetch the notification for the user
-        const [rows] = await pool.query(
-       `SELECT notification_id, type, message, is_read, created_at, related_id
-        FROM notification
-        WHERE user_id = ?
-        ORDER BY created_at DESC`,
-        [currentUserId]
-);
+        try {
+            const [rows] = await pool.query(
+                `SELECT notification_id, type, message, is_read, created_at, related_id
+                 FROM notification
+                 WHERE user_id = ?
+                 ORDER BY created_at DESC`,
+                [currentUserId]
+            );
 
-//DB
-        const notifications = rows.map((row) => ({
-         id: row.notification_id,
-         type: row.type,
-         message: row.message,
-         isRead: row.is_read,
-         timeAgo: formatTimeAgo(row.created_at),
-         iconClass: getIconClass(row.type),
-         iconSrc: getIconSrc(row.type),
-         link: getNotificationLink(row.type, row.related_id)
-}));
+            notifications = rows.map((row) => ({
+                id: row.notification_id,
+                type: row.type,
+                message: row.message,
+                isRead: row.is_read,
+                timeAgo: formatTimeAgo(row.created_at),
+                iconClass: getIconClass(row.type),
+                iconSrc: getIconSrc(row.type),
+                link: getNotificationLink(row.type, row.related_id)
+            }));
 
-//Assumes viewed
-        await pool.query(
-            `UPDATE notification
-             SET is_read = 1
-             WHERE user_id = ? AND is_read = 0`,
-            [currentUserId]
-        );
+            await pool.query(
+                `UPDATE notification
+                 SET is_read = 1
+                 WHERE user_id = ? AND is_read = 0`,
+                [currentUserId]
+            );
+        } catch (error) {
+            console.error("Notification fallback:", error.message);
+        }
 
-//Render notifications page
         return res.render("notifications", {
             activePage: "notifications",
             notifications

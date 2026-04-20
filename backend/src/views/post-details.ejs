@@ -69,8 +69,8 @@
           </div>
           <div class="post-actions-right">
             <form action="/posts/<%= post.id %>/save" method="POST" style="display:inline;">
-              <button class="action-btn" aria-label="Bookmark" type="submit" style="<%= post.isSaved ? 'background:#eef4e6;border-radius:999px;' : '' %>">
-                <img src="/images/Bookmark.svg" alt="Bookmark" style="height: 20px;">
+              <button class="action-btn" aria-label="Bookmark" type="submit" style="<%= post.isSaved ? 'background:#7f8f63;border-radius:999px;border-color:#7f8f63;' : '' %>">
+                <img src="/images/Bookmark.svg" alt="Bookmark" style="height: 20px;<%= post.isSaved ? 'filter:brightness(0) invert(1);' : '' %>">
               </button>
             </form>
             <button class="action-btn" aria-label="Share">

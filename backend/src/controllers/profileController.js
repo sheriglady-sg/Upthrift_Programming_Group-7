@@ -36,20 +36,36 @@ function mapProfilePost(post) {
 }
 
 async function getUserStats(userId) {
-    const [postRows] = await pool.query(
-        "SELECT COUNT(*) AS total FROM post WHERE user_id = ?",
-        [userId]
-    );
+    let postRows = [];
+    let followerRows = [];
+    let followingRows = [];
 
-    const [followerRows] = await pool.query(
-        "SELECT COUNT(*) AS total FROM user_follow WHERE following_id = ?",
-        [userId]
-    );
+    try {
+        [postRows] = await pool.query(
+            "SELECT COUNT(*) AS total FROM post WHERE user_id = ?",
+            [userId]
+        );
+    } catch (error) {
+        console.error("Profile post count fallback:", error.message);
+    }
 
-    const [followingRows] = await pool.query(
-        "SELECT COUNT(*) AS total FROM user_follow WHERE follower_id = ?",
-        [userId]
-    );
+    try {
+        [followerRows] = await pool.query(
+            "SELECT COUNT(*) AS total FROM user_follow WHERE following_id = ?",
+            [userId]
+        );
+    } catch (error) {
+        console.error("Follower count fallback:", error.message);
+    }
+
+    try {
+        [followingRows] = await pool.query(
+            "SELECT COUNT(*) AS total FROM user_follow WHERE follower_id = ?",
+            [userId]
+        );
+    } catch (error) {
+        console.error("Following count fallback:", error.message);
+    }
 
     return {
         posts: postRows[0] ? postRows[0].total : 0,
@@ -59,21 +75,31 @@ async function getUserStats(userId) {
 }
 
 async function getUserPosts(userId) {
-    const [rows] = await pool.query(
-        "SELECT p.post_id, p.caption, MAX(pm.meda_url) AS media_url FROM post p LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.user_id = ? GROUP BY p.post_id, p.caption ORDER BY p.creation_date DESC",
-        [userId]
-    );
+    try {
+        const [rows] = await pool.query(
+            "SELECT p.post_id, p.caption, MAX(pm.meda_url) AS media_url FROM post p LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.user_id = ? GROUP BY p.post_id, p.caption ORDER BY p.creation_date DESC",
+            [userId]
+        );
 
-    return rows.map(mapProfilePost);
+        return rows.map(mapProfilePost);
+    } catch (error) {
+        console.error("Profile posts fallback:", error.message);
+        return [];
+    }
 }
 
 async function getSavedPosts(userId) {
-    const [rows] = await pool.query(
-        "SELECT p.post_id, p.caption, MAX(pm.meda_url) AS media_url FROM post_save ps JOIN post p ON ps.post_id = p.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE ps.user_id = ? GROUP BY p.post_id, p.caption ORDER BY ps.saved_at DESC",
-        [userId]
-    );
+    try {
+        const [rows] = await pool.query(
+            "SELECT p.post_id, p.caption, MAX(pm.meda_url) AS media_url FROM post_save ps JOIN post p ON ps.post_id = p.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE ps.user_id = ? GROUP BY p.post_id, p.caption ORDER BY ps.saved_at DESC",
+            [userId]
+        );
 
-    return rows.map(mapProfilePost);
+        return rows.map(mapProfilePost);
+    } catch (error) {
+        console.error("Saved posts fallback:", error.message);
+        return [];
+    }
 }
 
 async function loadUserById(userId) {
@@ -104,12 +130,17 @@ async function getFollowState(currentUserId, targetUserId) {
         return false;
     }
 
-    const [rows] = await pool.query(
-        "SELECT follow_id FROM user_follow WHERE follower_id = ? AND following_id = ? LIMIT 1",
-        [currentUserId, targetUserId]
-    );
+    try {
+        const [rows] = await pool.query(
+            "SELECT follow_id FROM user_follow WHERE follower_id = ? AND following_id = ? LIMIT 1",
+            [currentUserId, targetUserId]
+        );
 
-    return rows.length > 0;
+        return rows.length > 0;
+    } catch (error) {
+        console.error("Follow state fallback:", error.message);
+        return false;
+    }
 }
 
 async function getProfilePage(req, res) {

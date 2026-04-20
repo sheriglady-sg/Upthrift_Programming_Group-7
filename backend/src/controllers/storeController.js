@@ -112,6 +112,21 @@ function findSeedStoreById(storeId) {
     return storesData.find((store) => store.store_id === Number(storeId)) || null;
 }
 
+function makeSeedStoreRow(store) {
+    return {
+        store_id: store.store_id,
+        name: store.name,
+        address: store.address,
+        google_maps_url: store.google_maps_url,
+        phone_number: store.phone_number,
+        website_url: store.website_url,
+        price_level: store.price_level,
+        type_name: store.store_type,
+        local_rating_total: 0,
+        local_review_count: 0
+    };
+}
+
 async function ensureStoresInDatabase() {
     if (storesLoaded) {
         return;
@@ -190,39 +205,79 @@ function mapReview(review) {
 async function loadStoreRows(searchText) {
     const query = searchText ? `%${searchText}%` : "%";
 
-    await ensureStoresInDatabase();
+    try {
+        await ensureStoresInDatabase();
 
-    const [rows] = await pool.query(
-        `SELECT
-            s.store_id,
-            s.name,
-            s.address,
-            s.google_maps_url,
-            s.phone_number,
-            s.website_url,
-            s.price_level,
-            st.type_name,
-            COALESCE(SUM(r.rating), 0) AS local_rating_total,
-            COUNT(r.review_id) AS local_review_count
-         FROM thrift_store s
-         LEFT JOIN store_type st ON st.store_type_id = s.store_type_id
-         LEFT JOIN store_review r ON r.store_id = s.store_id
-         WHERE s.verification_status != 'rejected'
-         AND (s.name LIKE ? OR s.address LIKE ?)
-         GROUP BY
-            s.store_id,
-            s.name,
-            s.address,
-            s.google_maps_url,
-            s.phone_number,
-            s.website_url,
-            s.price_level,
-            st.type_name
-         ORDER BY s.name ASC`,
-        [query, query]
-    );
+        const [rows] = await pool.query(
+            `SELECT
+                s.store_id,
+                s.name,
+                s.address,
+                s.google_maps_url,
+                s.phone_number,
+                s.website_url,
+                s.price_level,
+                st.type_name,
+                COALESCE(SUM(r.rating), 0) AS local_rating_total,
+                COUNT(r.review_id) AS local_review_count
+             FROM thrift_store s
+             LEFT JOIN store_type st ON st.store_type_id = s.store_type_id
+             LEFT JOIN store_review r ON r.store_id = s.store_id
+             WHERE s.verification_status != 'rejected'
+             AND (s.name LIKE ? OR s.address LIKE ?)
+             GROUP BY
+                s.store_id,
+                s.name,
+                s.address,
+                s.google_maps_url,
+                s.phone_number,
+                s.website_url,
+                s.price_level,
+                st.type_name
+             ORDER BY s.name ASC`,
+            [query, query]
+        );
 
-    return rows;
+        return rows;
+    } catch (error) {
+        console.error("Store table load failed, using local store data:", error.message);
+
+        const simpleQuery = String(searchText || "").trim().toLowerCase();
+
+        return storesData
+            .filter((store) => {
+                if (!simpleQuery) {
+                    return true;
+                }
+
+                return store.name.toLowerCase().includes(simpleQuery)
+                    || store.address.toLowerCase().includes(simpleQuery);
+            })
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(makeSeedStoreRow);
+    }
+}
+
+async function loadStoreReviews(storeId) {
+    try {
+        const [reviewRows] = await pool.query(
+            `SELECT
+                r.rating,
+                r.comment,
+                r.created_at,
+                u.username
+             FROM store_review r
+             INNER JOIN user u ON u.user_id = r.user_id
+             WHERE r.store_id = ?
+             ORDER BY r.created_at DESC`,
+            [storeId]
+        );
+
+        return reviewRows;
+    } catch (error) {
+        console.error("Store reviews load failed:", error.message);
+        return [];
+    }
 }
 
 async function findStoreBySlug(slug) {
@@ -263,18 +318,7 @@ async function getStorePage(req, res) {
             return res.status(404).send("Store not found");
         }
 
-        const [reviewRows] = await pool.query(
-            `SELECT
-                r.rating,
-                r.comment,
-                r.created_at,
-                u.username
-             FROM store_review r
-             INNER JOIN user u ON u.user_id = r.user_id
-             WHERE r.store_id = ?
-             ORDER BY r.created_at DESC`,
-            [storeRow.store_id]
-        );
+        const reviewRows = await loadStoreReviews(storeRow.store_id);
 
         const baseStore = findSeedStoreById(storeRow.store_id);
         const baseCount = Number(baseStore ? baseStore.review_amount : 0);
