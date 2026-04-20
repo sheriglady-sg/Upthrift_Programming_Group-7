@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <style>
+
+        /* Main page layout: sidebar + centered notifications content */
+
         .notifications-container {
             display: flex;
             flex-direction: row;
@@ -16,6 +19,8 @@
             background-color: #fdfdfb;
         }
 
+        /* Main notifications content area */
+
         .notifications-main {
             flex: 1;
             padding: 40px 60px;
@@ -24,12 +29,16 @@
             margin-right: auto;
         }
 
+        /* Wrapper for the list of notifications */
+
         .notification-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
             margin-top: 20px;
         }
+        
+        /* Individual notification card styling */
 
         .notification-card {
             background: #fff;
@@ -43,11 +52,15 @@
             cursor: pointer;
         }
 
+        /* Hover effect */
+
         .notification-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border-color: var(--color-accent);
         }
+
+        /* Circular icon container for different notification types */
 
         .icon-circle {
             width: 48px;
@@ -60,14 +73,20 @@
             flex-shrink: 0;
         }
 
+        /* Color variants for different notification categories */
+
         .type-like { background-color: #fff0f0; color: #ff4d4f; }
         .type-comment { background-color: #f0f7ff; color: #1890ff; }
         .type-follow { background-color: #f6ffed; color: #52c41a; }
         .type-system { background-color: #fff7e6; color: #faad14; }
 
+         /* Notification text content */
+
         .notif-content {
             flex: 1;
         }
+        
+        /* Notification message text */
 
         .notif-title {
             font-family: var(--font-body);
@@ -82,6 +101,8 @@
             color: #999;
         }
 
+        /*Load more*/
+
         .load-more {
             margin: 40px auto;
             display: block;
@@ -94,6 +115,8 @@
             text-decoration: underline;
         }
 
+        /*Unread Card*/
+        
         .notification-card--unread {
             border-left: 4px solid #7f8f63;
             background-color: #fcfcf7;
