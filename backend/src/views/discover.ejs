@@ -8,6 +8,70 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <!-- filter styles -->
+  <style>
+    .filter-dropdown-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .btn-filter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .filter-arrow {
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .filter-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      min-width: 160px;
+      z-index: 100;
+      overflow: hidden;
+      flex-direction: column;
+    }
+
+    .filter-dropdown.open {
+      display: flex;
+    }
+
+    .filter-option {
+      background: none;
+      border: none;
+      padding: 11px 18px;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      color: #333;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .filter-option:hover {
+      background: #f5f5f5;
+    }
+
+    .filter-option.active {
+      font-weight: 600;
+      background: #f0f0f0;
+    }
+
+    .filter-option:not(:last-child) {
+      border-bottom: 1px solid #f0f0f0;
+    }
+  </style>
 </head>
 
 <body>
@@ -34,13 +98,23 @@
             value="<%= query %>"
           />
         </div>
-        <button type="submit" class="btn-filter">Filter</button>
+        <div class="filter-dropdown-wrap">
+          <button type="button" class="btn-filter" id="filterBtn" onclick="toggleFilterDropdown()">
+            Filter
+            <span class="filter-arrow" id="filterArrow">▾</span>
+          </button>
+          <div class="filter-dropdown" id="filterDropdown">
+            <button type="button" class="filter-option active" data-type="all" onclick="selectFilter(this, 'all')">All</button>
+            <button type="button" class="filter-option" data-type="vintage_store" onclick="selectFilter(this, 'vintage_store')">Vintage Stores</button>
+            <button type="button" class="filter-option" data-type="charity_shop" onclick="selectFilter(this, 'charity_shop')">Charity Shops</button>
+          </div>
+        </div>
       </form>
 
       <!-- Store list -->
       <div class="store-list" id="storeList">
         <% stores.forEach((store, index) => { %>
-        <div class="store-card" data-index="<%= index %>">
+        <div class="store-card" data-index="<%= index %>" data-type="<%= store.store_type %>">
           <div class="store-card-img">
             <% if (store.image) { %>
               <img src="<%= store.image %>" alt="<%= store.name %>" class="store-thumb-img">
@@ -81,21 +155,58 @@
       <script>
         const PAGE_SIZE = 6;
         let visible = PAGE_SIZE;
+        let activeFilter = 'all';
 
-        const cards = document.querySelectorAll('#storeList .store-card');
+        const allCards = Array.from(document.querySelectorAll('#storeList .store-card'));
         const wrap = document.getElementById('loadMoreWrap');
 
+        function getFilteredCards() {
+          return activeFilter === 'all'
+            ? allCards
+            : allCards.filter(c => c.dataset.type === activeFilter);
+        }
+
         function applyVisibility() {
-          cards.forEach((card, i) => {
+          const filtered = getFilteredCards();
+          allCards.forEach(card => card.style.display = 'none');
+          filtered.forEach((card, i) => {
             card.style.display = i < visible ? '' : 'none';
           });
-          if (visible >= cards.length) {
-            wrap.style.display = 'none';
+          if (wrap) {
+            wrap.style.display = visible >= filtered.length ? 'none' : '';
           }
         }
 
         function loadMore() {
           visible += PAGE_SIZE;
+          applyVisibility();
+        }
+
+        // Dropdown toggle
+        function toggleFilterDropdown() {
+          const dropdown = document.getElementById('filterDropdown');
+          const arrow = document.getElementById('filterArrow');
+          const isOpen = dropdown.classList.toggle('open');
+          arrow.textContent = isOpen ? '▴' : '▾';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          const wrap = document.getElementById('filterDropdown');
+          const btn = document.getElementById('filterBtn');
+          if (!btn.contains(e.target) && !wrap.contains(e.target)) {
+            wrap.classList.remove('open');
+            document.getElementById('filterArrow').textContent = '▾';
+          }
+        });
+
+        function selectFilter(el, type) {
+          activeFilter = type;
+          visible = PAGE_SIZE;
+          document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
+          el.classList.add('active');
+          document.getElementById('filterDropdown').classList.remove('open');
+          document.getElementById('filterArrow').textContent = '▾';
           applyVisibility();
         }
 

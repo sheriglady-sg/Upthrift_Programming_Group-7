@@ -186,7 +186,8 @@ function mapStoreCard(store) {
         rating: finalRating.toFixed(1),
         reviewCount: finalCount,
         distance: getShortLocation(baseStore.address),
-        description: buildStoreDescription(baseStore)
+        description: buildStoreDescription(baseStore),
+        store_type: baseStore.store_type || store.type_name || ""
     };
 }
 
