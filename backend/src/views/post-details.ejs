@@ -19,16 +19,21 @@
     <main class="main-content main-content--details">
       <div class="page-header-row page-header-row--details">
         <a href="/feed" class="back-link">
-          <!-- REPLACE: Back arrow icon -->
           <span class="back-arrow">←</span> Back to Feed
         </a>
         <span class="breadcrumb-tag">POST DETAILS</span>
       </div>
 
-      <!-- Post Card -->
+      <% if (message) { %>
+        <div class="form-message success-message"><%= message %></div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="form-message error-message"><%= error %></div>
+      <% } %>
+
       <div class="post-card post-card--detail">
           <div class="post-header">
-            <!-- Avatar links to user profile -->
               <a href="/user/<%= post.authorSlug %>" class="post-author-link">
                 <% if (post.authorAvatar) { %>
                   <img src="<%= post.authorAvatar %>" alt="<%= post.author %>" class="post-avatar-img">
@@ -37,14 +42,12 @@
                 <% } %>
               </a>
             <div class="post-meta">
-              <!-- Author name links to user profile -->
               <a href="/user/<%= post.authorSlug %>" class="post-author post-author-link">
                 <%= post.author %>
               </a>
             <span class="post-time"><%= post.fullDate || post.timeAgo %></span>
           </div>
         </div>
-        <!-- media content -->
         <p class="post-content"><%= post.content %></p>
         <% if (post.image && post.mediaType === "video") { %>
           <video src="<%= post.image %>" class="post-media-img post-media-img--large" controls></video>
@@ -56,12 +59,10 @@
         <div class="post-actions">
           <div class="post-actions-left">
             <button class="action-btn like-btn" aria-label="Like">
-              <!-- likes -->
               <img src="/images/Heart_02.svg" alt="Like" style="height: 20px;">
               <span class="action-count"><%= post.likes %></span>
             </button>
             <button class="action-btn" aria-label="Comments">
-              <!-- Comment -->
               <img src="/images/Chat_Circle_Dots.svg" alt="Comments" style="height: 18px;">
               <span class="action-count"><%= post.comments %></span>
             </button>
@@ -69,52 +70,54 @@
           <div class="post-actions-right">
             <form action="/posts/<%= post.id %>/save" method="POST" style="display:inline;">
               <button class="action-btn" aria-label="Bookmark" type="submit" style="<%= post.isSaved ? 'background:#eef4e6;border-radius:999px;' : '' %>">
-                <!-- Bookmark -->
                 <img src="/images/Bookmark.svg" alt="Bookmark" style="height: 20px;">
               </button>
             </form>
             <button class="action-btn" aria-label="Share">
-              <!-- Share -->
               <img src="/images/Navigation.svg" alt="Share" style="height: 18px;">
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Comments Section -->
       <section class="comments-section">
         <h2 class="comments-title">Comments</h2>
 
-        <div class="comments-area-placeholder">Comments section</div>
-
         <div class="comments-list">
+          <% if (post.commentList.length === 0) { %>
+            <div class="comments-area-placeholder">No comments yet</div>
+          <% } %>
+
           <% post.commentList.forEach(comment => { %>
-          <div class="comment-item">
-            <a href="/user/<%= comment.authorSlug %>">
-              <% if (comment.authorAvatar) { %>
-                <img src="<%= comment.authorAvatar %>" alt="<%= comment.author %>" class="comment-avatar-img">
-              <% } else { %>
-                <div class="avatar-placeholder xsmall"></div>
-              <% } %>
-            </a>
-            <div class="comment-body">
-              <a href="/user/<%= comment.authorSlug %>" class="comment-author-link">
-                <%= comment.author %>
+            <div class="comment-item">
+              <a href="/user/<%= comment.authorSlug %>">
+                <% if (comment.authorAvatar) { %>
+                  <img src="<%= comment.authorAvatar %>" alt="<%= comment.author %>" class="comment-avatar-img">
+                <% } else { %>
+                  <div class="avatar-placeholder xsmall"></div>
+                <% } %>
               </a>
-              <p class="comment-text"><%= comment.text %></p>
-              <span class="comment-time"><%= comment.timeAgo %></span>
+              <div class="comment-body">
+                <a href="/user/<%= comment.authorSlug %>" class="comment-author-link">
+                  <%= comment.author %>
+                </a>
+                <p class="comment-text"><%= comment.text %></p>
+                <span class="comment-time"><%= comment.timeAgo %></span>
+              </div>
             </div>
-          </div>
           <% }) %>
         </div>
 
-        <div class="comment-input-row">
-          <input type="text" class="comment-input" placeholder="Add a comment..." />
-          <button class="comment-send-btn" aria-label="Send comment">
-            <!-- Send button -->
-            <span class="send-icon">➤</span>
-          </button>
-        </div>
+        <% if (currentUser) { %>
+          <form action="/posts/<%= post.id %>/comment" method="POST" class="comment-input-row">
+            <input type="text" name="content" class="comment-input" placeholder="Add a comment..." />
+            <button type="submit" class="comment-send-btn" aria-label="Send comment">
+              <span class="send-icon">➤</span>
+            </button>
+          </form>
+        <% } else { %>
+          <div class="comments-area-placeholder">Log in to leave a comment</div>
+        <% } %>
       </section>
     </main>
   </div>

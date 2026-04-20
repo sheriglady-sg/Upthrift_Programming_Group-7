@@ -99,6 +99,19 @@ async function loadUserBySlug(slug) {
     return null;
 }
 
+async function getFollowState(currentUserId, targetUserId) {
+    if (!currentUserId || !targetUserId || currentUserId === targetUserId) {
+        return false;
+    }
+
+    const [rows] = await pool.query(
+        "SELECT follow_id FROM user_follow WHERE follower_id = ? AND following_id = ? LIMIT 1",
+        [currentUserId, targetUserId]
+    );
+
+    return rows.length > 0;
+}
+
 async function getProfilePage(req, res) {
     const userId = req.session && req.session.user_id;
 
@@ -182,6 +195,7 @@ async function getSavedProfilePage(req, res) {
 async function getUserProfilePage(req, res) {
     const slug = req.params.slug;
     const activeTab = req.query.tab === "about" ? "about" : "posts";
+    const currentUserId = req.session && req.session.user_id ? req.session.user_id : 0;
 
     try {
         const user = await loadUserBySlug(slug);
@@ -192,10 +206,14 @@ async function getUserProfilePage(req, res) {
 
         const stats = await getUserStats(user.user_id);
         const posts = await getUserPosts(user.user_id);
+        const isOwnProfile = currentUserId === user.user_id;
+        const isFollowing = await getFollowState(currentUserId, user.user_id);
 
         return res.render("user-profile", {
             activePage: "profile",
             activeTab: activeTab,
+            message: req.query.message || "",
+            error: req.query.error || "",
             user: {
                 fullName: user.username,
                 username: "@" + user.username,
@@ -207,7 +225,9 @@ async function getUserProfilePage(req, res) {
                 slug: makeSlug(user.username),
                 avatar: user.profile_pic_url || "",
                 initials: getInitials(user.username),
-                postImages: posts
+                postImages: posts,
+                isOwnProfile: isOwnProfile,
+                isFollowing: isFollowing
             }
         });
     } catch (error) {
@@ -216,8 +236,78 @@ async function getUserProfilePage(req, res) {
     }
 }
 
+async function toggleFollow(req, res) {
+    const slug = req.params.slug;
+    const currentUserId = req.session && req.session.user_id;
+
+    if (!currentUserId) {
+        return res.redirect("/login?error=Please%20log%20in%20to%20follow");
+    }
+
+    try {
+        const user = await loadUserBySlug(slug);
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        if (user.user_id === currentUserId) {
+            return res.redirect(`/user/${slug}?error=You%20cannot%20follow%20yourself`);
+        }
+
+        const [rows] = await pool.query(
+            "SELECT follow_id FROM user_follow WHERE follower_id = ? AND following_id = ? LIMIT 1",
+            [currentUserId, user.user_id]
+        );
+
+        if (rows.length > 0) {
+            await pool.query(
+                "DELETE FROM user_follow WHERE follow_id = ?",
+                [rows[0].follow_id]
+            );
+
+            return res.redirect(`/user/${slug}?message=Follow%20removed`);
+        }
+
+        await pool.query(
+            "INSERT INTO user_follow (follower_id, following_id) VALUES (?, ?)",
+            [currentUserId, user.user_id]
+        );
+
+        const [currentUserRows] = await pool.query(
+            "SELECT username FROM user WHERE user_id = ? LIMIT 1",
+            [currentUserId]
+        );
+
+        const followerName = currentUserRows.length > 0 ? currentUserRows[0].username : "Someone";
+
+        await pool.query(
+            `INSERT INTO notification (user_id, type, related_id, message, is_read)
+             VALUES (?, ?, ?, ?, 0)`,
+            [
+                user.user_id,
+                "new_follower",
+                currentUserId,
+                `${followerName} started following you.`
+            ]
+        );
+
+        const io = req.app.get("io");
+
+        if (io) {
+            io.to(`user_${user.user_id}`).emit("new_notification");
+        }
+
+        return res.redirect(`/user/${slug}?message=Followed%20successfully`);
+    } catch (error) {
+        console.error("Toggle follow failed:", error);
+        return res.redirect(`/user/${slug}?error=Failed%20to%20update%20follow`);
+    }
+}
+
 module.exports = {
     getProfilePage,
     getSavedProfilePage,
-    getUserProfilePage
+    getUserProfilePage,
+    toggleFollow
 };

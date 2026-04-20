@@ -82,11 +82,19 @@ const writeReviewValidation = [
         .isLength({ max: 500 }).withMessage("Review must be 500 characters or less")
 ];
 
+const commentValidation = [
+    body("content")
+        .trim()
+        .notEmpty().withMessage("Comment cannot be empty")
+        .isLength({ max: 500 }).withMessage("Comment must be 500 characters or less")
+];
+
 module.exports = {
     signupValidation,
     loginValidation,
     forgotPasswordValidation,
     resetPasswordValidation,
     createPostValidation,
-    writeReviewValidation
+    writeReviewValidation,
+    commentValidation
 };

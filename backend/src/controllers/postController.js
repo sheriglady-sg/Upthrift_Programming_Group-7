@@ -284,6 +284,79 @@ async function toggleSave(req, res) {
     }
 }
 
+async function addComment(req, res) {
+    const postId = req.params.id;
+    const userId = req.session && req.session.user_id;
+
+    if (!userId) {
+        if (isHtmlRequest(req)) {
+            return res.redirect("/login?error=Please%20log%20in%20to%20comment");
+        }
+
+        return res.status(401).json({
+            message: "Please log in first"
+        });
+    }
+
+    try {
+        const content = (req.body.content || "").trim();
+
+        await pool.query(
+            "INSERT INTO comment (user_id, post_id, content) VALUES (?, ?, ?)",
+            [userId, postId, content]
+        );
+
+        const [postRows] = await pool.query(
+            "SELECT user_id FROM post WHERE post_id = ? LIMIT 1",
+            [postId]
+        );
+
+        if (postRows.length > 0 && postRows[0].user_id !== userId) {
+            const [userRows] = await pool.query(
+                "SELECT username FROM user WHERE user_id = ? LIMIT 1",
+                [userId]
+            );
+
+            const authorName = userRows.length > 0 ? userRows[0].username : "Someone";
+
+            await pool.query(
+                `INSERT INTO notification (user_id, type, related_id, message, is_read)
+                 VALUES (?, ?, ?, ?, 0)`,
+                [
+                    postRows[0].user_id,
+                    "new_comment",
+                    postId,
+                    `${authorName} commented on your post.`
+                ]
+            );
+
+            const io = req.app.get("io");
+
+            if (io) {
+                io.to(`user_${postRows[0].user_id}`).emit("new_notification");
+            }
+        }
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(`/post/${postId}?message=Comment%20added`);
+        }
+
+        return res.status(201).json({
+            message: "Comment added"
+        });
+    } catch (error) {
+        console.error("Add comment failed:", error);
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(`/post/${postId}?error=Failed%20to%20add%20comment`);
+        }
+
+        return res.status(500).json({
+            message: "Failed to add comment"
+        });
+    }
+}
+
 async function getPostDetailsPage(req, res) {
     try {
         const postId = req.params.id;
@@ -307,6 +380,8 @@ async function getPostDetailsPage(req, res) {
 
         return res.render("post-details", {
             activePage: "feed",
+            message: req.query.message || "",
+            error: req.query.error || "",
             post: {
                 id: post.post_id,
                 author: post.username,
@@ -344,5 +419,6 @@ module.exports = {
     getCreatePostPage,
     getPostDetailsPage,
     toggleLike,
-    toggleSave
+    toggleSave,
+    addComment
 };

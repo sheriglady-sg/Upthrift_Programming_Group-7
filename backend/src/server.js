@@ -206,6 +206,7 @@ app.get("/post/:id", postController.getPostDetailsPage);
 app.get("/profile", profileController.getProfilePage);
 app.get("/profile/saved", profileController.getSavedProfilePage);
 app.get("/user/:slug", profileController.getUserProfilePage);
+app.post("/user/:slug/follow", profileController.toggleFollow);
 app.get("/events", eventController.getEventsPage);
 app.get("/events/:slug", eventController.getEventDetailsPage);
 app.post("/events/:slug/rsvp", eventController.postRsvp);
