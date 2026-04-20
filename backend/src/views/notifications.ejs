@@ -6,6 +6,7 @@
     <title>Notifications | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <!-- style for notifications container -->
     <style>
         .notifications-container {
             display: flex;
@@ -106,15 +107,15 @@
     </style>
 </head>
 <body style="font-family: var(--font-body);">
-
+<!-- Topbar -->
     <%- include('components/topbar') %>
-
+<!-- sidebar -->
     <div class="notifications-container">
         <%- include('components/sidebar', { activePage }) %>
 
         <main class="notifications-main">
             <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Notifications</h1>
-
+<!-- notification list -->
             <div class="notification-list">
                 <% if (!notifications || notifications.length === 0) { %>
                     <div class="notification-card">
@@ -142,11 +143,11 @@
   </a>
             <% }) %>
             </div>
-
+<!-- load more button -->
             <button class="load-more">Load More Notifications</button>
         </main>
     </div>
-
+<!-- footer -->
     <%- include('components/footerlogin') %>
 
 </body>

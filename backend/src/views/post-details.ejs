@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<!-- Topbar -->
   <%- include('components/topbar') %>
-
+<!-- sidebar -->
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
@@ -44,6 +44,7 @@
             <span class="post-time"><%= post.fullDate || post.timeAgo %></span>
           </div>
         </div>
+        <!-- media content -->
         <p class="post-content"><%= post.content %></p>
         <% if (post.image && post.mediaType === "video") { %>
           <video src="<%= post.image %>" class="post-media-img post-media-img--large" controls></video>
@@ -55,23 +56,23 @@
         <div class="post-actions">
           <div class="post-actions-left">
             <button class="action-btn like-btn" aria-label="Like">
-              <!-- REPLACE: Heart icon -->
+              <!-- likes -->
               <img src="/images/Heart_02.svg" alt="Like" style="height: 20px;">
               <span class="action-count"><%= post.likes %></span>
             </button>
             <button class="action-btn" aria-label="Comments">
-              <!-- REPLACE: Comment icon -->
+              <!-- Comment -->
               <img src="/images/Chat_Circle_Dots.svg" alt="Comments" style="height: 18px;">
               <span class="action-count"><%= post.comments %></span>
             </button>
           </div>
           <div class="post-actions-right">
             <button class="action-btn" aria-label="Bookmark">
-              <!-- REPLACE: Bookmark icon -->
+              <!-- Bookmark -->
               <img src="/images/Bookmark.svg" alt="Bookmark" style="height: 20px;">
             </button>
             <button class="action-btn" aria-label="Share">
-              <!-- REPLACE: Share icon -->
+              <!-- Share -->
               <img src="/images/Navigation.svg" alt="Share" style="height: 18px;">
             </button>
           </div>
@@ -108,14 +109,14 @@
         <div class="comment-input-row">
           <input type="text" class="comment-input" placeholder="Add a comment..." />
           <button class="comment-send-btn" aria-label="Send comment">
-            <!-- REPLACE: Send icon -->
+            <!-- Send button -->
             <span class="send-icon">➤</span>
           </button>
         </div>
       </section>
     </main>
   </div>
-
+<!-- footer -->
   <%- include('components/footerlogin') %>
 
 </body>

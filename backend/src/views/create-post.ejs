@@ -10,23 +10,24 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<!-- topbar -->
   <%- include('components/topbar') %>
-
+<!-- sidebar -->
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
     <main class="main-content main-content--create">
       <div class="page-header-row page-header-row--details">
+        <!-- back button -->
         <a href="/feed" class="back-link">
-          <!-- REPLACE: Back arrow icon -->
+
           <span class="back-arrow">←</span> Back to Feed
         </a>
         <span class="breadcrumb-tag">CREATE POST – UPLOAD PHOTO/VIDEO</span>
       </div>
 
       <h1 class="page-title">Share Your Find</h1>
-
+<!-- notification succes/error -->
       <% if (message) { %>
         <div class="form-message success-message"><%= message %></div>
       <% } %>
@@ -37,7 +38,7 @@
 
       <div class="create-post-form-wrapper">
         <form action="/posts" method="POST" enctype="multipart/form-data" class="create-post-form">
-
+<!-- poster username -->
           <div class="form-group">
             <label class="form-label">Username</label>
             <input
@@ -49,7 +50,7 @@
             />
             <input type="hidden" name="user_id" value="<%= userId %>">
           </div>
-
+<!-- post category -->
           <div class="form-group">
             <label class="form-label">Category</label>
             <select class="form-input" name="category" required>
@@ -60,7 +61,7 @@
               <option value="Home Decor">Home Decor</option>
             </select>
           </div>
-
+<!-- post description -->
           <div class="form-group">
             <label class="form-label">Description</label>
             <textarea
@@ -70,7 +71,7 @@
               rows="3"
             ></textarea>
           </div>
-
+<!-- post location -->
           <div class="form-group">
             <label class="form-label">Location</label>
             <input
@@ -80,11 +81,10 @@
               placeholder="Optional location"
             />
           </div>
-
+<!-- Upload Media -->
           <div class="form-group">
             <label class="form-label">Upload Media</label>
             <div class="upload-drop-zone" id="dropZone">
-              <!-- REPLACE: Upload icon -->
               <div class="upload-icon-placeholder">↑</div>
               <p class="upload-label">Drag and drop your photos or videos here</p>
               <p class="upload-note">You can upload one photo or one video for this post.</p>
@@ -92,23 +92,21 @@
               <button type="button" class="btn-browse" onclick="document.getElementById('fileInput').click()">Browse Files</button>
               <input type="file" id="fileInput" name="media" accept="image/*,video/*" style="display:none" onchange="handleFiles(this.files)" />
             </div>
-
+<!-- upload media -->
             <div class="upload-type-btns">
               <button type="button" class="btn-upload-type" onclick="document.getElementById('fileInput').click()">
-                <!-- REPLACE: Photo icon -->
                 <img src="/images/Image_01.svg" alt="Add Photo" style="height: 20px;">Add Photo  
               </button>
               <button type="button" class="btn-upload-type" onclick="document.getElementById('fileInput').click()">
-                <!-- REPLACE: Video icon -->
                 <img src="/images/Video.svg" alt="Add Video" style="height: 20px;">Add Video
               </button>
             </div>
-
+<!-- post preview -->
             <div class="media-preview-area" id="previewArea">
               <span class="preview-placeholder-text">Preview area for uploaded media</span>
             </div>
           </div>
-
+<!-- post/cancel buttons -->
           <div class="form-actions">
             <a href="/feed" class="btn-cancel">Cancel</a>
             <button type="submit" class="btn-post">Post</button>
@@ -118,7 +116,7 @@
       </div>
     </main>
   </div>
-
+<!-- footer -->
   <%- include('components/footerlogin') %>
 
   <script src="/js/create-post.js"></script>

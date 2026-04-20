@@ -10,15 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<!-- Topbar -->
   <%- include('components/topbar') %>
-
+<!-- sidebar -->
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
     <main class="main-content main-content--new-msg">
 
       <div class="new-msg-header">
+        <!-- back link -->
         <a href="/messages" class="back-link">
           <span class="back-arrow">←</span>
         </a>
@@ -27,7 +28,7 @@
           <p class="new-msg-subtitle">Send a message to another UPTHRIFT member</p>
         </div>
       </div>
-
+<!-- search user to message -->
       <div class="new-msg-form-card">
         <form action="/messages/start" method="POST" class="new-msg-form">
           <input type="hidden" name="other_user_id" id="selectedUserId" />
@@ -48,7 +49,7 @@
           </div>
 
           <hr class="new-msg-form-divider" />
-
+<!-- type message -->
           <div class="new-msg-body-row">
             <label class="new-msg-body-label">Message:</label>
             <textarea
@@ -58,14 +59,14 @@
               rows="8"
             ></textarea>
           </div>
-
+<!-- send message button -->
           <div class="new-msg-actions">
             <a href="/messages" class="btn-nm-cancel">Cancel</a>
             <button type="submit" class="btn-nm-send" id="sendMessageBtn" disabled>Send Message</button>
           </div>
         </form>
       </div>
-
+<!-- suggested users -->
       <section class="suggested-users-section">
         <h2 class="suggested-title">Suggested Users</h2>
         <div class="suggested-list" id="suggestedList">
@@ -89,9 +90,9 @@
 
     </main>
   </div>
-
+<!-- Footer -->
   <%- include('components/footerlogin') %>
-
+<!-- scripts for new message -->
   <script>
     function filterUsers(query) {
       const items = document.querySelectorAll('.suggested-item');

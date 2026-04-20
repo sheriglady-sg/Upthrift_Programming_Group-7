@@ -10,19 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<!-- topbar -->
   <%- include('components/topbar') %>
-
+<!-- sidebar -->
   <div class="navigation">
     <%- include('components/sidebar', { activePage: 'messages' }) %>
-
+<!-- main chatbox -->
     <main class="main-content main-content--chatbox">
 
       <div class="chat-header">
         <div class="chat-header-left">
+          <!-- back button -->
           <a href="/messages" class="back-link chat-back">
             <span class="back-arrow">←</span>
           </a>
+          <!-- user info -->
           <div class="chat-header-info">
             <h2 class="chat-name"><%= otherUserName %></h2>
             <span class="chat-status">Active now</span>
@@ -37,12 +39,14 @@
 
       <div class="chat-input-area">
         <div class="chat-input-row"> 
+          <!-- input image -->
           <div class="chat-input-actions">
          <input type="file" id="imageInput" accept="image/*" style="display: none;">
           <button class="chat-action-btn" aria-label="Send image" type="button" id="imagePickerBtn">
           <img src="/images/Image_01.svg" alt="Send image" style="height: 18px;">
   </button>
 </div>
+<!-- text box -->
 
           <input
             type="text"
@@ -60,9 +64,9 @@
 
     </main>
   </div>
-
+<!-- footer -->
   <%- include('components/footerlogin') %>
-
+<!-- script for messaging -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
@@ -151,7 +155,7 @@
 
   let contentHtml = "";
 
-  // ✅ Show image if exists
+  // Show image if exists
   if (msg.media_url) {
     contentHtml += `
       <img 
@@ -162,7 +166,7 @@
     `;
   }
 
-  // ✅ Show text ONLY if it's not "//image"
+  // Show text ONLY if it's not "//image"
   if (msg.message_text && msg.message_text !== "//image") {
     contentHtml += `<p class="bubble-text">${msg.message_text}</p>`;
   }
@@ -185,7 +189,7 @@
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-    //Append message with the date separator
+    // Append message with the date separator
     function appendMessageWithDate(msg) {
     const currentDateLabel = formatDateLabel(msg.sent_at);
 
@@ -197,7 +201,7 @@
     appendMessage(msg);
   }
 
-  //Load previous messages
+  // Load previous messages
     async function loadMessages() {
       try {
         const response = await fetch(`/messages/conversation/${conversationId}`);
@@ -216,7 +220,7 @@
     }
   }
 
-//Send a new message
+// Send a new message
 
     async function sendMessage() {
       const text = input.value.trim();
@@ -254,7 +258,7 @@
       }
     }
 
-    //Recieve real time messages
+    // Recieve real time messages
     socket.on("new_message", (msg) => {
     if (
     String(msg.conversation_id) === String(conversationId) &&
@@ -274,7 +278,7 @@ socket.on("user_stop_typing", () => {
   typingIndicator.textContent = "";
 });
 
-    //Event Listeners
+    // Event Listeners
     input.addEventListener("input", () => {
   if (input.value.trim()) {
     handleTyping();
@@ -294,7 +298,7 @@ socket.on("user_stop_typing", () => {
 
     sendBtn.addEventListener("click", sendMessage);
 
-    //Add image
+    // Add image
     imagePickerBtn.addEventListener("click", () => {
   imageInput.click();
 });

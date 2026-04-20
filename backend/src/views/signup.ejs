@@ -6,6 +6,7 @@
     <title>Signup | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <!-- style for signup page -->
     <style>
         .split-body {
             background-color: #f2f2ee; 
@@ -166,7 +167,7 @@
     </style>
 </head>
 <body class="split-body">
-
+<!-- Topbar -->
     <%- include('components/topbar-guest') %>
 
     <main class="split-container">
@@ -175,7 +176,7 @@
                 <span class="page-badge">SIGNUP</span>
                 <h1 class="page-title">Create Account</h1>
                 <p class="subtitle">Join the UPTHRIFT community</p>
-
+<!-- success/error notifications -->
                 <% if (typeof message !== 'undefined' && message) { %>
                     <div class="form-message success-message"><%= message %></div>
                 <% } %>
@@ -183,7 +184,7 @@
                 <% if (typeof error !== 'undefined' && error) { %>
                     <div class="form-message error-message"><%= error %></div>
                 <% } %>
-
+<!-- signup form -->
                 <form action="/auth/signup" method="POST" class="styled-form">
                     <div class="form-group">
                         <label class="form-label">Username</label>
@@ -204,9 +205,9 @@
                         <label class="form-label">Confirm Password</label>
                         <input type="password" name="confirmPassword" class="comment-input" placeholder="........" required>
                     </div>
-
+<!-- Create Account button -->
                     <button type="submit" class="btn-post">Create Account</button>
-
+<!-- login link -->
                     <p class="bottom-text">
                         Already have an account? <a href="/login" class="action-link">Sign in</a>
                     </p>
@@ -218,7 +219,7 @@
             <img src="/images/signup.jpg" alt="Thrift Store Rack">
         </section>
     </main>
-
+<!-- Footer -->
     <%- include('components/footer') %>
 
 </body>

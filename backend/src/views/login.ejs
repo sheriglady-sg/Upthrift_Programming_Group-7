@@ -6,6 +6,7 @@
     <title>Login | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <!-- login page styles -->
     <style>
         
         .split-body {
@@ -181,7 +182,7 @@
     </style>
 </head>
 <body class="split-body">
-
+<!-- Topbar -->
     <%- include('components/topbar-guest') %>
 
     <main class="split-container">
@@ -191,7 +192,7 @@
                 
                 <h1 class="page-title">Welcome Back</h1>
                 <p class="subtitle">Sign in to your account</p>
-
+<!-- login form -->
                 <% if (typeof message !== 'undefined' && message) { %>
                     <div class="form-message success-message"><%= message %></div>
                 <% } %>
@@ -210,11 +211,11 @@
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="comment-input" placeholder="........" required>
                     </div>
-
+<!-- forgot password link -->
                     <a href="/forget-password" class="forget-password">Forgot Password?</a>
-
+<!-- sign in button -->
                     <button type="submit" class="btn-post">Sign In</button>
-
+<!-- sign up link -->
                     <p class="bottom-text">
                         Don't have an account? <a href="/signup" class="action-link">Sign up</a>
                     </p>
@@ -226,7 +227,7 @@
             <img src="/images/login.jpg" alt="Woman with vintage clothes">
         </section>
     </main>
-
+<!-- Footer -->
     <%- include('components/footer') %>
 
 </body>

@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<!-- Topbar -->
   <%- include('components/topbar') %>
-
+<!-- sidebar -->
   <div class="navigation">
     <%- include('components/sidebar', { activePage }) %>
 
@@ -68,16 +68,16 @@
       <!-- Tabs -->
       <div class="profile-tabs">
         <a href="/profile" class="profile-tab <%= activeTab === 'posts' ? 'profile-tab--active' : '' %>">
-          <!-- REPLACE: grid icon -->
+          <!-- grid icon -->
           <img src="/images/Image_01.svg" alt="Posts" style="height: 18px;"> Posts
         </a>
         <a href="/profile/saved" class="profile-tab <%= activeTab === 'saved' ? 'profile-tab--active' : '' %>">
-          <!-- REPLACE: bookmark icon -->
+          <!-- bookmark -->
           <img src="/images/Bookmark.svg" alt="Saved Posts" style="height: 18px;"> Saved Posts
         </a>
       </div>
 
-      <!-- Grid -->
+      <!-- Post Grid -->
       <div class="profile-grid">
         <% if (activeTab === 'posts') { %>
           <% if (profile.myPosts.length === 0) { %>
@@ -110,7 +110,7 @@
 
     </main>
   </div>
-
+<!-- footer -->
   <%- include('components/footerlogin') %>
 
 </body>

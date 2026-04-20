@@ -6,6 +6,7 @@
     <title>Settings | UpThrift</title>
     <link rel="stylesheet" href="/css/mainlogin.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+ <!-- settings style -->
  <style>
         .settings-container {
             display: flex;
@@ -137,14 +138,14 @@
     </style>
 </head>
 <body style="font-family: var(--font-body);">
-
+<!-- Topbar -->
     <%- include('components/topbar') %>
-
+<!-- Settings Container -->
     <div class="settings-container">
      <%- include('components/sidebar', { activePage: 'profile' }) %>
         <main class="settings-main">
             <h1 class="page-title" style="font-family: var(--font-display); font-size: 32px; margin-bottom: 30px;">Settings</h1>
-
+<!-- tabs -->
 <div class="settings-tabs">
     <button class="tab-btn active" onclick="openTab(event, 'account-info')">
         <img src="/images/User_02.svg" alt="Account Info" style="height: 18px; margin-right: 5px;">
@@ -160,29 +161,32 @@
     </button>
 </div>
 
-
+<!-- account settings -->
 <div id="account-info" class="settings-section active">
     <div class="content-card">
+        <!-- Account Info -->
         <div class="section-header">ACCOUNT INFO</div>
 
         <form method="POST" action="/settings/account">
             <div class="info-row">
+                <!-- Username -->
                 <label class="info-label">Username</label>
                 <input type="text" name="username" class="comment-input" value="<%= user.username %>">
             </div>
 
             <div class="info-row">
+                <!-- Email Address -->
                 <label class="info-label">Email Address</label>
                 <input type="email" name="email" class="comment-input" value="<%= user.email %>">
             </div>
-
+<!-- save account info button -->
             <button class="btn-post" style="width:100%; margin-top:20px;">Save Account Info</button>
         </form>
 
         <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
 
         <h3 style="font-family: var(--font-display); margin-bottom:20px;">Change Password</h3>
-
+<!-- change password form -->
         <form method="POST" action="/settings/password">
             <div class="form-group">
                 <label class="form-label">Current Password</label>
@@ -193,14 +197,14 @@
                 <label class="form-label">New Password</label>
                 <input type="password" name="newPassword" class="comment-input" placeholder="********">
             </div>
-
+<!-- confirm new password -->
             <button class="btn-post" style="width:100%; margin-top:30px;">Save Password</button>
         </form>
     </div>
 </div>
 
 
-
+<!-- profile settings -->
 <div id="profile" class="settings-section">
     <div class="content-card">
         <div class="section-header">PROFILE</div>
@@ -210,10 +214,10 @@
                 <img src="<%= user.profile_pic_url || '/images/ProfileDP.png' %>" alt="Profile Photo" class="profile-avatar-img">
                 <input type="file" name="profile_photo" accept="image/*">
             </div>
-
+<!-- upload new photo button -->
             <button class="btn-post" style="width:100%; margin-top:20px;">Upload New Photo</button>
         </form>
-
+<!-- bio form -->
         <form method="POST" action="/settings/profile">
             <div class="form-group" style="margin-top:20px;">
                 <label class="form-label">Bio</label>
@@ -226,11 +230,11 @@
 </div>
 
 
-
+<!-- privacy settings -->
 <div id="privacy" class="settings-section">
     <div class="content-card">
         <div class="section-header">PRIVACY SETTINGS</div>
-
+<!-- private account toggle -->
         <form method="POST" action="/settings/privacy">
             <div class="flex-between">
                 <div>
@@ -242,15 +246,17 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
+<!-- save changes button -->
             <button class="btn-post" style="margin-top:20px; width:100%;">Save Changes</button>
         </form>
     </div>
+    <!-- Log Out -->
     <div class="content-card" style="border-color: #ffdce0;">
         <div class="section-header" style="color:#ff4d4f;">LOG OUT</div>
         <div class="flex-between" style="border:none; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <div class="info-label">Sign Out</div>
+                <!-- redirect to login page -->
                 <div style="font-size:12px; color:#999;">You will be redirected to the login page</div>
             </div>
             <div style="flex: 0; min-width: 140px; display: flex; justify-content: flex-end;">
@@ -263,9 +269,9 @@
         </div>
     </div>
 </div>
-
+<!-- Footer -->
     <%- include('components/footerlogin') %>
-
+<!-- Script for Tab Navigation -->
     <script>
     function openTab(evt, tabName) {
         var i, x, tablinks;
