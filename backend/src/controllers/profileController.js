@@ -305,28 +305,32 @@ async function toggleFollow(req, res) {
             [currentUserId, user.user_id]
         );
 
-        const [currentUserRows] = await pool.query(
-            "SELECT username FROM user WHERE user_id = ? LIMIT 1",
-            [currentUserId]
-        );
+        try {
+            const [currentUserRows] = await pool.query(
+                "SELECT username FROM user WHERE user_id = ? LIMIT 1",
+                [currentUserId]
+            );
 
-        const followerName = currentUserRows.length > 0 ? currentUserRows[0].username : "Someone";
+            const followerName = currentUserRows.length > 0 ? currentUserRows[0].username : "Someone";
 
-        await pool.query(
-            `INSERT INTO notification (user_id, type, related_id, message, is_read)
-             VALUES (?, ?, ?, ?, 0)`,
-            [
-                user.user_id,
-                "new_follower",
-                currentUserId,
-                `${followerName} started following you.`
-            ]
-        );
+            await pool.query(
+                `INSERT INTO notification (user_id, type, related_id, message, is_read)
+                 VALUES (?, ?, ?, ?, 0)`,
+                [
+                    user.user_id,
+                    "new_follower",
+                    currentUserId,
+                    `${followerName} started following you.`
+                ]
+            );
 
-        const io = req.app.get("io");
+            const io = req.app.get("io");
 
-        if (io) {
-            io.to(`user_${user.user_id}`).emit("new_notification");
+            if (io) {
+                io.to(`user_${user.user_id}`).emit("new_notification");
+            }
+        } catch (error) {
+            console.error("Follow notification skipped:", error.message);
         }
 
         return res.redirect(`/user/${slug}?message=Followed%20successfully`);

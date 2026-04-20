@@ -12,11 +12,8 @@ const signupValidation = [
     body("password")
         .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
     body("confirmPassword")
+        .notEmpty().withMessage("Please confirm your password")
         .custom((value, { req }) => {
-            if (!value) {
-                return true;
-            }
-
             if (value !== req.body.password) {
                 throw new Error("Passwords do not match");
             }

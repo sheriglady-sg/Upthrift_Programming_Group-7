@@ -1,15 +1,5 @@
 const { validationResult } = require("express-validator");
 
-function isHtmlRequest(req) {
-    const acceptHeader = req.headers.accept || "";
-    return acceptHeader.includes("text/html");
-}
-
-function buildRedirectUrl(basePath, message) {
-    const divider = basePath.includes("?") ? "&" : "?";
-    return `${basePath}${divider}error=${encodeURIComponent(message)}`;
-}
-
 function handleValidationErrors(redirectPath) {
     return function (req, res, next) {
         const errors = validationResult(req);
@@ -20,13 +10,17 @@ function handleValidationErrors(redirectPath) {
 
         const firstError = errors.array()[0];
         const message = firstError.msg || "Invalid form data";
+        const accept = req.headers.accept || "";
 
-        if (isHtmlRequest(req)) {
-            const targetPath = typeof redirectPath === "function"
-                ? redirectPath(req)
-                : redirectPath;
+        if (accept.includes("text/html")) {
+            let targetPath = redirectPath;
 
-            return res.redirect(buildRedirectUrl(targetPath, message));
+            if (typeof redirectPath === "function") {
+                targetPath = redirectPath(req);
+            }
+
+            const divider = targetPath.includes("?") ? "&" : "?";
+            return res.redirect(`${targetPath}${divider}error=${encodeURIComponent(message)}`);
         }
 
         return res.status(400).json({

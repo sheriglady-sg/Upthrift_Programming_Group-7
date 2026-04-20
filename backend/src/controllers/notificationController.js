@@ -1,12 +1,8 @@
-//Notification Controller
-
 const pool = require("../config/db");
 
-//Renders the notfication for the logged in user
 exports.renderNotificationsPage = async (req, res) => {
     const currentUserId = req.session.user_id;
 
-//Redirects
     if (!currentUserId) {
         return res.redirect("/login?error=Please%20log%20in");
     }
@@ -54,7 +50,6 @@ exports.renderNotificationsPage = async (req, res) => {
     }
 };
 
-//Timestamp
 function formatTimeAgo(dateValue) {
     if (!dateValue) return "";
 
@@ -73,7 +68,6 @@ function formatTimeAgo(dateValue) {
     return `${days} days ago`;
 }
 
-//css class
 function getIconClass(type) {
     if (type === "new_like") return "type-like";
     if (type === "new_comment") return "type-comment";
