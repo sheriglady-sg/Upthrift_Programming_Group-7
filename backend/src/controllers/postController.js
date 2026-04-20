@@ -116,8 +116,10 @@ async function getFeed(req, res) {
 
 async function getFeedPage(req, res) {
     try {
+        const currentUserId = req.session && req.session.user_id ? req.session.user_id : 0;
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.is_public = 1 GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url ORDER BY p.creation_date DESC"
+            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type, MAX(CASE WHEN ps.user_id IS NOT NULL THEN 1 ELSE 0 END) AS is_saved FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 LEFT JOIN post_save ps ON p.post_id = ps.post_id AND ps.user_id = ? WHERE p.is_public = 1 GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url ORDER BY p.creation_date DESC",
+            [currentUserId]
         );
 
         const feedPosts = posts.map((post) => {
@@ -131,7 +133,8 @@ async function getFeedPage(req, res) {
                 image: post.media_url || "",
                 mediaType: post.media_type || "",
                 likes: post.likes || 0,
-                comments: post.comments || 0
+                comments: post.comments || 0,
+                isSaved: Number(post.is_saved || 0) === 1
             };
         });
 
@@ -228,13 +231,67 @@ async function toggleLike(req, res) {
     }
 }
 
+async function toggleSave(req, res) {
+    const postId = req.params.id;
+    const userId = req.session && req.session.user_id;
+    const backTo = req.get("referer") || "/feed";
+
+    if (!userId) {
+        if (isHtmlRequest(req)) {
+            return res.redirect("/login?error=Please%20log%20in%20to%20save%20posts");
+        }
+
+        return res.status(401).json({
+            message: "Please log in first"
+        });
+    }
+
+    try {
+        const [rows] = await pool.query(
+            "SELECT save_id FROM post_save WHERE user_id = ? AND post_id = ? LIMIT 1",
+            [userId, postId]
+        );
+
+        if (rows.length > 0) {
+            await pool.query(
+                "DELETE FROM post_save WHERE save_id = ?",
+                [rows[0].save_id]
+            );
+        } else {
+            await pool.query(
+                "INSERT INTO post_save (user_id, post_id) VALUES (?, ?)",
+                [userId, postId]
+            );
+        }
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(backTo);
+        }
+
+        return res.json({
+            message: "Save updated"
+        });
+    } catch (error) {
+        console.error("Toggle save failed:", error);
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(`${backTo}${backTo.includes("?") ? "&" : "?"}error=Failed%20to%20update%20save`);
+        }
+
+        return res.status(500).json({
+            message: "Failed to update save"
+        });
+    }
+}
+
 async function getPostDetailsPage(req, res) {
     try {
         const postId = req.params.id;
+        const currentUserId = req.session && req.session.user_id ? req.session.user_id : 0;
 
         const [posts] = await pool.query(
-            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url",
-            [postId]
+            "SELECT p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url, COUNT(DISTINCT pl.like_id) AS likes, COUNT(DISTINCT c.comment_id) AS comments, MAX(pm.meda_url) AS media_url, MAX(pm.media_type) AS media_type, MAX(CASE WHEN ps.user_id IS NOT NULL THEN 1 ELSE 0 END) AS is_saved FROM post p JOIN user u ON p.user_id = u.user_id LEFT JOIN post_like pl ON p.post_id = pl.post_id LEFT JOIN comment c ON p.post_id = c.post_id LEFT JOIN post_media pm ON p.post_id = pm.post_id AND pm.upload_order = 1 LEFT JOIN post_save ps ON p.post_id = ps.post_id AND ps.user_id = ? WHERE p.post_id = ? GROUP BY p.post_id, p.caption, p.creation_date, u.username, u.profile_pic_url",
+            [currentUserId, postId]
         );
 
         if (posts.length === 0) {
@@ -261,6 +318,7 @@ async function getPostDetailsPage(req, res) {
                 image: post.media_url || "",
                 mediaType: post.media_type || "",
                 likes: post.likes || 0,
+                isSaved: Number(post.is_saved || 0) === 1,
                 comments: post.comments || 0,
                 commentList: commentRows.map((comment) => {
                     return {
@@ -285,5 +343,6 @@ module.exports = {
     getFeedPage,
     getCreatePostPage,
     getPostDetailsPage,
-    toggleLike
+    toggleLike,
+    toggleSave
 };
