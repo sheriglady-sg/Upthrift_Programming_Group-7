@@ -32,7 +32,7 @@
         <div class="event-card" data-index="<%= index %>">
             <div class="event-card-img">
               <% if (event.image) { %>
-                <img src="<%= event.image %>" alt="<%= event.title %>" class="event-thumb-img">
+                <img src="<%= event.image %>" alt="<%= event.title %>" class="event-thumb-img" onerror="this.onerror=null;this.src='/images/event1.jpg';">
               <% } else { %>
                 <span class="event-thumb-icon">📅</span>
               <% } %>

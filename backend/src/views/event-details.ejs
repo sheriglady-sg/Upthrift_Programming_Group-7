@@ -28,7 +28,7 @@
       <!-- Cover image -->
       <div class="event-detail-card">
         <% if (event.cover) { %>
-          <img src="<%= event.cover %>" alt="<%= event.title %>" class="event-cover-img">
+          <img src="<%= event.cover %>" alt="<%= event.title %>" class="event-cover-img" onerror="this.onerror=null;this.src='/images/event1.jpg';">
         <% } else { %>
           <div class="event-cover-placeholder">Event Cover Image</div>
         <% } %>
