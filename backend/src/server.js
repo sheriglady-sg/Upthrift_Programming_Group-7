@@ -12,6 +12,8 @@ const postController = require("./controllers/postController");
 const storeController = require("./controllers/storeController");
 const eventController = require("./controllers/eventController");
 const profileController = require("./controllers/profileController");
+const { handleValidationErrors } = require("./middleware/validation");
+const { writeReviewValidation } = require("./middleware/validators");
 
 const app = express();
 const server = http.createServer(app);
@@ -210,7 +212,7 @@ app.post("/events/:slug/rsvp", eventController.postRsvp);
 app.get("/discover", storeController.getDiscoverPage);
 app.get("/store/:slug", storeController.getStorePage);
 app.get("/store/:slug/review", storeController.getWriteReviewPage);
-app.post("/store/:slug/review", storeController.postReview);
+app.post("/store/:slug/review", writeReviewValidation, handleValidationErrors((req) => `/store/${req.params.slug}/review`), storeController.postReview);
 
 app.get("/chat/:conversationId", async (req, res) => {
     if (!req.session.user_id) {

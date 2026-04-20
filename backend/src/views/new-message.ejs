@@ -14,9 +14,13 @@
   <%- include('components/topbar') %>
 <!-- sidebar -->
   <div class="navigation">
+    <!-- Sidebar navigation with active page highlighting -->
+
     <%- include('components/sidebar', { activePage }) %>
 
     <main class="main-content main-content--new-msg">
+
+      <!-- Page header: back button, title, and subtitle -->
 
       <div class="new-msg-header">
         <!-- back link -->
@@ -31,6 +35,9 @@
 <!-- search user to message -->
       <div class="new-msg-form-card">
         <form action="/messages/start" method="POST" class="new-msg-form">
+
+          <!-- Hidden field to store the selected recipient's user ID -->
+
           <input type="hidden" name="other_user_id" id="selectedUserId" />
 
           <div class="new-msg-to-row">
@@ -47,6 +54,8 @@
               />
             </div>
           </div>
+
+          <!-- Divider between recipient selection and message body -->
 
           <hr class="new-msg-form-divider" />
 <!-- type message -->
@@ -94,6 +103,9 @@
   <%- include('components/footerlogin') %>
 <!-- scripts for new message -->
   <script>
+
+      // Filter suggested users based on search input
+
     function filterUsers(query) {
       const items = document.querySelectorAll('.suggested-item');
       items.forEach(item => {
@@ -102,6 +114,8 @@
       });
     }
 
+      // Send button only when both recipient and message are provided
+
     function updateSendButtonState() {
       const userId = document.getElementById('selectedUserId').value.trim();
       const message = document.querySelector('textarea[name="message_text"]').value.trim();
@@ -109,6 +123,8 @@
 
       sendBtn.disabled = !(userId && message);
     }
+
+      // Set selected user details and highlight the chosen recipient
 
     function selectUser(element, name, userId) {
       document.getElementById('recipientInput').value = name;
@@ -127,6 +143,8 @@
 
       updateSendButtonState();
     }
+
+      // Event listeners after the page loads
 
     document.addEventListener('DOMContentLoaded', function() {
       const messageBox = document.querySelector('textarea[name="message_text"]');

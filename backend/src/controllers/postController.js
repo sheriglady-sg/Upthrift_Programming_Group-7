@@ -175,6 +175,59 @@ async function getCreatePostPage(req, res) {
     });
 }
 
+async function toggleLike(req, res) {
+    const postId = req.params.id;
+    const userId = req.session && req.session.user_id;
+    const backTo = req.get("referer") || "/feed";
+
+    if (!userId) {
+        if (isHtmlRequest(req)) {
+            return res.redirect("/login?error=Please%20log%20in%20to%20like%20posts");
+        }
+
+        return res.status(401).json({
+            message: "Please log in first"
+        });
+    }
+
+    try {
+        const [rows] = await pool.query(
+            "SELECT like_id FROM post_like WHERE user_id = ? AND post_id = ? LIMIT 1",
+            [userId, postId]
+        );
+
+        if (rows.length > 0) {
+            await pool.query(
+                "DELETE FROM post_like WHERE like_id = ?",
+                [rows[0].like_id]
+            );
+        } else {
+            await pool.query(
+                "INSERT INTO post_like (user_id, post_id) VALUES (?, ?)",
+                [userId, postId]
+            );
+        }
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(backTo);
+        }
+
+        return res.json({
+            message: "Like updated"
+        });
+    } catch (error) {
+        console.error("Toggle like failed:", error);
+
+        if (isHtmlRequest(req)) {
+            return res.redirect(`${backTo}${backTo.includes("?") ? "&" : "?"}error=Failed%20to%20update%20like`);
+        }
+
+        return res.status(500).json({
+            message: "Failed to update like"
+        });
+    }
+}
+
 async function getPostDetailsPage(req, res) {
     try {
         const postId = req.params.id;
@@ -231,5 +284,6 @@ module.exports = {
     getFeed,
     getFeedPage,
     getCreatePostPage,
-    getPostDetailsPage
+    getPostDetailsPage,
+    toggleLike
 };
